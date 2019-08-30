@@ -184,7 +184,6 @@ sub Main() {
     }
 
     if ( $difficulty >= 5 ) {
-        #### inverted x or y axis
         $inv_int = _generate_random_int(100);
         if ( $inv_int == 88 ) {
             $inv_use  = "inverted y axis"; 
@@ -287,6 +286,10 @@ sub _generate_random_int($) {
 
     my $max = $_[0] + 1;
     my $min = $_[1] || 0;
+    
+    # new random number generation
+    #my $first_rand = int(rand($max/2));
+    #my $secon_rand = int(rand($max/2));
 
     return int(rand($max)) + $min;
 
