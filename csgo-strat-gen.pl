@@ -61,11 +61,9 @@ sub Main() {
 
     $weapons{nades}{0}   = ["buy incgrenade; buy molotov; "  , "Molotov/Incendiary Grenade"];
     $weapons{nades}{1}   = ["buy decoy; "                    , "Decoy Grenade"];
-    $weapons{nades}{2}   = ["buy decoy; buy decoy; "         , "Decoy Grenade x2"];
-    $weapons{nades}{3}   = ["buy hegrenade; "                , "HE Grenade"];
-    $weapons{nades}{4}   = ["buy smokegrenade; "             , "Smoke Grenade"];
-    $weapons{nades}{5}   = ["buy flashbang; "                , "Flashbang"];
-    $weapons{nades}{6}   = ["buy flashbang; buy flashbang; " , "Flashbang x2"];
+    $weapons{nades}{2}   = ["buy hegrenade; "                , "HE Grenade"];
+    $weapons{nades}{3}   = ["buy smokegrenade; "             , "Smoke Grenade"];
+    $weapons{nades}{4}   = ["buy flashbang; buy flashbang; " , "Flashbangs"];
 
     $weapons{armor}{0}   = [""                               , "No Kevlar"];
     $weapons{armor}{1}   = ["buy vest; "                     , "Just Kevlar"];
@@ -86,7 +84,7 @@ sub Main() {
         $nade_int1, $nade_int2, $nade_use1, $nade_use2, $defuser_int, $defuser_use,
         $taser_int, $taser_use, $jump_int, $jump_use, $jump_info, $sens_int,
         $rand_sens, $sens_use, $inv_int, $inv_use, $spray_int, $spray_use,
-        $move_int, $move_use, $move_info) = undef;
+        $move_int, $move_use, $move_info, $move_prob) = undef;
 
     if ( $difficulty >= 0 ) {
         #### get pistol
@@ -111,11 +109,15 @@ sub Main() {
 
     if ( $difficulty >= 1 ) {
         #### get nades
-        $nade_int1   = _generate_random_int(6);
+        $nade_int1   = _generate_random_int(4);
         $nade_use1   = $weapons{nades}{$nade_int1}[1];
         $bind_string = $bind_string . $weapons{nades}{$nade_int1}[0];
-
-        $nade_int2   = _generate_random_int(6);
+        
+        #### fix duplicated nade issue
+        $nade_int2   = _generate_random_int(4);
+        while ( $nade_int1 == $nade_int2 ) {
+            $nade_int2 = _generate_random_int(4);
+        }
         $nade_use2   = $weapons{nades}{$nade_int2}[1];
         $bind_string = $bind_string . $weapons{nades}{$nade_int2}[0];
     }
@@ -139,8 +141,8 @@ sub Main() {
         $jump_int    = _generate_random_int(10);
         if ( $jump_int == 8 ) {
             $jump_use        = "no jumping";
-            $jump_info       = "or unbind your specifig key";
-            $hardcore_string = $hardcore_string . "unbind space; unbind mwheelup; unbind mwheeldown; ";
+            $jump_info       = "(unbind your specifig key)";
+            $hardcore_string = $hardcore_string . "unbind space; unbind mwheelup; ";
         } else {
             $jump_use  = "normal";
             $jump_info = ""; 
@@ -192,16 +194,28 @@ sub Main() {
         }
     }
 
-    if ( $difficulty >= 5 ) {
+    if ( $difficulty >= 6 ) {
         #### restricted movement for wasd
-        $move_int = _generate_random_int(2);
+        $move_prob = 20 - $difficulty;
+        if ( $move_prob < 4 ) {
+            $move_prob = 4;
+        }
+        $move_int = _generate_random_int($move_prob);
         if ( $move_int == 1 ) {
-            $move_use = "No a/d keys";
-            $hardcore_string = $hardcore_string . "unbind a; unbind d; ";
+            $move_use = "No w/a keys";
+            $hardcore_string = $hardcore_string . "unbind w; unbind a; ";
             $move_info = "(unbind your specific key)"
         } elsif ( $move_int == 2 ) {
-            $move_use = "No w/s keys";
-            $hardcore_string = $hardcore_string . "unbind w; unbind s; ";
+            $move_use = "No w/d keys";
+            $hardcore_string = $hardcore_string . "unbind w; unbind d; ";
+            $move_info = "(unbind your specific key)"
+        } elsif ( $move_int == 3 ) {
+            $move_use = "No s/a keys";
+            $hardcore_string = $hardcore_string . "unbind s; unbind a; ";
+            $move_info = "(unbind your specific key)"
+        } elsif ( $move_int == 4 ) {
+            $move_use = "No s/d keys";
+            $hardcore_string = $hardcore_string . "unbind s; unbind d; ";
             $move_info = "(unbind your specific key)"
         } else {
             $move_use = 'normal';
@@ -251,6 +265,9 @@ sub Main() {
 
     if ( $difficulty >= 5 ) {
         print "Inverted mouse   : $inv_use\n";
+    }
+
+    if ( $difficulty >= 6 ) {
         print "Movement         : $move_use $move_info\n";
     }
    
