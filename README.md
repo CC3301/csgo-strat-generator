@@ -36,13 +36,13 @@ doesn't use any external modules.
   you can turn your mouse down to 1 DPI.
   
   ### difficulty levels
-  0: generates a set of pistol and gun to use
-  1: difficulty 0 and armor, nades and taser
-  2: difficulty 1 and defuse or rescue kit
-  3: difficulty 2 and jumping setting
-  4: difficulty 3 and random sensivity and shooting properties
-  5: difficulty 4 and inverted mouse
-  6: difficulty 5 and movement restrictions
+  + 0: generates a set of pistol and gun to use
+  + 1: difficulty 0 and armor, nades and taser
+  + 2: difficulty 1 and defuse or rescue kit
+  + 3: difficulty 2 and jumping setting
+  + 4: difficulty 3 and random sensivity and shooting properties
+  + 5: difficulty 4 and inverted mouse
+  + 6: difficulty 5 and movement restrictions
 
   
 **Have fun and remember to *NOT* overwrite your main config.**
