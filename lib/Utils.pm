@@ -61,9 +61,9 @@ package Utils {
     my $random_int = Random::GetRandom($counter);
 
     my %return;
-    $return{name} = $pistols{$random_int}{name};
-    $return{buy}  = $pistols{$random_int}{buy};
-    $return{cost} = $pistols{$random_int}{cost};
+    $return{name} = $utils{$random_int}{name};
+    $return{buy}  = $utils{$random_int}{buy};
+    $return{cost} = $utils{$random_int}{cost};
     
     return(%return);
   }

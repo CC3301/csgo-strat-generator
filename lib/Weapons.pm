@@ -59,11 +59,13 @@ package Weapons {
     # get a random number with the max being the index counter
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $random_int = Random::GetRandom($counter);
-    
+    #my $random_int = 22;
+
+
     my %return;
-    $return{name} = $pistols{$random_int}{name};
-    $return{buy}  = $pistols{$random_int}{buy};
-    $return{cost} = $pistols{$random_int}{cost};
+    $return{name} = $weapons{$random_int}{name};
+    $return{buy}  = $weapons{$random_int}{buy};
+    $return{cost} = $weapons{$random_int}{cost};
     
     return(%return);
 
