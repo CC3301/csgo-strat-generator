@@ -57,15 +57,18 @@ package Grenades {
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get a random number with the max being the index counter
+    # get a random number with the max being the index counter and return the
+    # corresponding items
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $random_int = Random::GetRandom($counter);
 
-    # test print some data
-    print "Grenade: " . $grenades{$random_int}{name} . "\n";
-    print "\tBuy:   " . $grenades{$random_int}{buy}  . "\n";
-    print "\tCost:  " . $grenades{$random_int}{cost} . "\n";
-
+    my %return;
+    $return{name} = $grenades{$random_int}{name};
+    $return{buy}  = $grenades{$random_int}{buy};
+    $return{cost} = $grenades{$random_int}{cost};
+    
+    return(%return);
+    
   }
   #############################################################################
   # _read_weapon_file subroutine 

@@ -60,11 +60,12 @@ package Utils {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $random_int = Random::GetRandom($counter);
 
-    # test print some data
-    print "Util: " . $utils{$random_int}{name} . "\n";
-    print "\tBuy:   " . $utils{$random_int}{buy}  . "\n";
-    print "\tCost:  " . $utils{$random_int}{cost} . "\n";
-
+    my %return;
+    $return{name} = $pistols{$random_int}{name};
+    $return{buy}  = $pistols{$random_int}{buy};
+    $return{cost} = $pistols{$random_int}{cost};
+    
+    return(%return);
   }
   #############################################################################
   # _read_weapon_file subroutine 
