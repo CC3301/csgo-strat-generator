@@ -98,7 +98,7 @@ sub Main() {
   print "===================================================================\n";
   print "\nDifficulty : $difficulty\n";
   print "Total Cost : $total_cost\$\n\n";
-  print "Command: bind <key>$command_string\n";
+  print "Command: bind <key>\"$command_string\"\n";
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return
