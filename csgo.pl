@@ -25,33 +25,40 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # generate weapons 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  
+  # generate pistol and check for free choice
   my %pistol = _generate_weapon_set('pistol');
   while(_check_for_free_choice($difficulty, %pistol)) {
     %pistol = _generate_weapon_set('pistol');
   }
-
+  
+  # generate weapon and check for free choice
   my %weapon = _generate_weapon_set('weapon');
   while(_check_for_free_choice($difficulty, %weapon)) {
     %weapon = _generate_weapon_set('weapon');
   }
 
+  # generate grenade1 and check for free choice
   my %grenade1 = _generate_weapon_set('grenade1');
   while(_check_for_free_choice($difficulty, %grenade1)) {
     %grenade1 = _generate_weapon_set('grenade1');
   }
 
+  # generate grenade2 and check for free choice
   my %grenade2 = _generate_weapon_set('grenade2');
-  while(_check_for_free_choice($difficulty, %grenade2)) {
+  while(_check_for_free_choice($difficulty, %grenade2) || _check_for_duplicate(\%grenade1, \%grenade2)) {
     %grenade2 = _generate_weapon_set('grenade2');
   }
 
+  # generate util2 and check for free choice
   my %util1 = _generate_weapon_set('util1');
   while(_check_for_free_choice($difficulty, %util1)) {
     %util1 = _generate_weapon_set('util1');
   }
 
+  # generate util2 and check for free choice
   my %util2 = _generate_weapon_set('util2');
-  while(_check_for_free_choice($difficulty, %util2)) {
+  while(_check_for_free_choice($difficulty, %util2) || _check_for_duplicate(\%util1, \%util2)) {
     %util2 = _generate_weapon_set('util2');
   }
 
@@ -177,4 +184,33 @@ sub _check_for_free_choice {
   return 0;
 
 }
+
+################################################################################
+# _check_for_duplicate subroutine 
+################################################################################
+sub _check_for_duplicate {
+
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # get vars passed to the function
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  my $item1 = shift;
+  my $item2 = shift;
+
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # check each dataset for duplicates 
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  if ($item1->{buy} eq $item2->{buy}) {
+    return 1;
+  }
+
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # return data
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  return 0;
+
+}
+
+################################################################################
+# Main subroutine call 
+################################################################################
 exit(Main());
