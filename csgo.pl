@@ -4,6 +4,7 @@ use warnings;
 
 use lib 'lib';
 use Items;
+use Strats;
 
 ################################################################################
 # Main subroutine
@@ -59,6 +60,9 @@ sub Main() {
     %util2 = _generate_weapon_set('utils');
   }
 
+  # generate strat
+  my %strat = Strats::GetStrat($difficulty);
+
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # generate hardcore settings
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -96,6 +100,12 @@ sub Main() {
   }
   if ($difficulty >= 2) {
     print "Utilities to use: " . $util1{name} . ", " . $util2{name} . "\n";
+  }
+  if ($difficulty >= 3) {
+    print "\n";
+    print "Strat:\n";
+    print "\tName:        " . $strat{name} . "\n";
+    print "\tDescription: " . $strat{desc} . "\n";
   }
 
   # print the rest of the stats
