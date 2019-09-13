@@ -26,10 +26,10 @@
 ## WIP
   
   - Strats
+  - Debug System
 
 ## Planned
   
-  - Debug system
   - Hardcore Mode
   - Make adding more strats or weapons, which might
     be added in future csgo updates, to the '.inv'

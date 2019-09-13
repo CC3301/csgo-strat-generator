@@ -5,12 +5,16 @@ use warnings;
 use lib 'lib';
 use Items;
 use Strats;
+use Debug;
 
 ################################################################################
 # Main subroutine
 ################################################################################
 sub Main() {
   
+  # initialize the debug output
+  Debug::Debug("Starting csgo strat gen..");
+
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get difficulty
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -19,6 +23,8 @@ sub Main() {
   unless($difficulty =~ /^-?\d+$/) {
     die "Invalid difficulty";
   }
+
+  Debug::Debug("Using difficulty: $difficulty");
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # generate weapons 
@@ -73,6 +79,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my $total_cost = $pistol{cost} + $grenade1{cost} + $grenade2{cost} + 
                    $weapon{cost} + $util1{cost} + $util2{cost};
+  Debug::Debug("Total cost of all items: $total_cost\$");
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # add all the buy commands together
@@ -80,14 +87,18 @@ sub Main() {
   my $command_string = "";
   my @buys = ($pistol{buy}, $grenade1{buy}, $grenade2{buy}, $weapon{buy},
               $util1{buy}, $util2{buy}); 
+
+  Debug::Debug("Constructing the buy command");
   foreach(@buys) {
     next if $_ eq "NONE";
     $command_string = $command_string . " buy $_;";
   }
+  Debug::Debug("Buy command: $command_string");
    
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # print data
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Debug::Debug("Priting output");
   print "CSGO strat-generator output:\n\n";
   print "===================================================================\n";
   
@@ -117,6 +128,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Debug::Debug("csgo strat gen complete.");
   return(0);
   
 }
@@ -168,6 +180,7 @@ sub _check_for_free_choice {
   # check each dataset for free choice
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($item{buy} eq "NONE") {
+    Debug::Debug("Found free choice, running difficulty $difficulty. Regenerating");
     return 1;
   }
 
@@ -193,6 +206,7 @@ sub _check_for_duplicate {
   # check each dataset for duplicates 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($item1->{buy} eq $item2->{buy}) {
+    Debug::Debug("Found duplicate item (" . $item1->{buy} . "). Regenerating.");
     return 1;
   }
 

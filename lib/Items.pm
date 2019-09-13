@@ -9,6 +9,7 @@ package Items {
   use lib 'lib/';
   use Random;
   use ReadInventory;
+  use Debug;
 
   #############################################################################
   # GetWeapon subroutine
@@ -19,6 +20,7 @@ package Items {
     # get item_type 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $item_type = shift || die "No item type passed";
+    Debug::Debug("Generating dataset for $item_type");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
@@ -53,6 +55,7 @@ package Items {
         print "\tI suspect the error to be near to:\n";
         print "\t\t$items[$counter]\n";
         print "\tin /data/$item_type.inv at line $h_counter\n";
+        Debug::Debug("Can't continue on malformed data line");
         die();
       }
 
@@ -64,6 +67,8 @@ package Items {
       # increment the index counter
       $counter++;
     }
+
+    Debug::Debug("Finished processing $item_type inventory file");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get a random number with the max being the index counter
