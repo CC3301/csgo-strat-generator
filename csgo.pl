@@ -3,10 +3,7 @@ use strict;
 use warnings;
 
 use lib 'lib';
-use Weapons;
-use Grenades;
-use Pistols;
-use Utils;
+use Items;
 
 ################################################################################
 # Main subroutine
@@ -27,39 +24,39 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   
   # generate pistol and check for free choice
-  my %pistol = _generate_weapon_set('pistol');
+  my %pistol = _generate_weapon_set('pistols');
   while(_check_for_free_choice($difficulty, %pistol)) {
-    %pistol = _generate_weapon_set('pistol');
+    %pistol = _generate_weapon_set('pistols');
   }
   
   # generate weapon and check for free choice
-  my %weapon = _generate_weapon_set('weapon');
+  my %weapon = _generate_weapon_set('weapons');
   while(_check_for_free_choice($difficulty, %weapon)) {
-    %weapon = _generate_weapon_set('weapon');
+    %weapon = _generate_weapon_set('weapons');
   }
 
   # generate grenade1 and check for free choice
-  my %grenade1 = _generate_weapon_set('grenade1');
+  my %grenade1 = _generate_weapon_set('grenades');
   while(_check_for_free_choice($difficulty, %grenade1)) {
-    %grenade1 = _generate_weapon_set('grenade1');
+    %grenade1 = _generate_weapon_set('grenades');
   }
 
   # generate grenade2 and check for free choice
-  my %grenade2 = _generate_weapon_set('grenade2');
+  my %grenade2 = _generate_weapon_set('grenades');
   while(_check_for_free_choice($difficulty, %grenade2) || _check_for_duplicate(\%grenade1, \%grenade2)) {
-    %grenade2 = _generate_weapon_set('grenade2');
+    %grenade2 = _generate_weapon_set('grenades');
   }
 
   # generate util2 and check for free choice
-  my %util1 = _generate_weapon_set('util1');
+  my %util1 = _generate_weapon_set('utils');
   while(_check_for_free_choice($difficulty, %util1)) {
-    %util1 = _generate_weapon_set('util1');
+    %util1 = _generate_weapon_set('utils');
   }
 
   # generate util2 and check for free choice
-  my %util2 = _generate_weapon_set('util2');
+  my %util2 = _generate_weapon_set('utils');
   while(_check_for_free_choice($difficulty, %util2) || _check_for_duplicate(\%util1, \%util2)) {
-    %util2 = _generate_weapon_set('util2');
+    %util2 = _generate_weapon_set('utils');
   }
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -132,21 +129,7 @@ sub _generate_weapon_set {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # generate datasets
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  if ($type eq 'pistol') {
-    %item = Pistols::GetPistol();
-  } elsif($type eq 'weapon') {
-    %item = Weapons::GetWeapon();
-  } elsif($type eq 'grenade1') {
-    %item = Grenades::GetGrenade();
-  } elsif($type eq 'grenade2') {
-    %item = Grenades::GetGrenade();
-  } elsif($type eq 'util1') {
-    %item = Utils::GetUtil();
-  } elsif($type eq 'util2') {
-    %item = Utils::GetUtil();
-  } else {
-    die "Tried to generate unknown item type";
-  }
+  %item = Items::GetItem($type);
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return data
