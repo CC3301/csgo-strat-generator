@@ -114,9 +114,11 @@ sub Main() {
   }
   if ($difficulty >= 3) {
     print "\n";
-    print "Strat:\n";
-    print "\tName:        " . $strat{name} . "\n";
-    print "\tDescription: " . $strat{desc} . "\n";
+    print "Strat: " . $strat{name} . "\n";
+    print "Description:\n";
+    foreach(split ';', $strat{desc}) {
+      print "\t$_\n";
+    }
   }
 
   # print the rest of the stats

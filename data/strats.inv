@@ -1,18 +1,18 @@
-Mid to B:On T side: run through mid to B every round. On CT side: Stack mid and B with 3 players being on B and 2 in Mid,0
-Mid to A:On T side: run through mid to A every round. On CT side: Stack mid and A with 3 players being on A and 2 in Mid,1
+Mid to B:On T  side: run through mid to B every round. ;On CT side: Stack mid and B with 3 players being on B and 2 in Mid.,0
+Mid to A:On T  side: run through mid to A every round. ;On CT side: Stack mid and A with 3 players being on A and 2 in Mid.,1
 
-A Stack:On T side: Go A every round. On CT side: Stack on A and rotate only on bomb plant,2
-B Stack:On T side: Go B every round. On CT side: Stack on B and rotate only on bomb plant,3
+A Stack:On T  side: Go A every round. ;On CT side: Stack on A and rotate only on bomb plant.,2
+B Stack:On T  side: Go B every round. ;On CT side: Stack on B and rotate only on bomb plant.,3
 
-Mid Stack:On T side: go mid every round. On CT side: Stack mid and wait for bomb plant then rush whatever site is planted at,4
+Mid Stack:On T  side: go mid every round. ;On CT side: Stack mid and wait for bomb plant then rush whatever site is planted at.,4
 
-Sad Man:Stay crouching and looking at the bottom the rest of the round once your first teammate dies,5
-Happy Man:Never stop jumping until the bomb is planted,6
-Nice Man:Don't shoot any enemies until you are the last one alive from your team,7
+Sad Man:Stay crouching and looking at the bottom the rest of the round once your first teammate dies.,5
+Happy Man:Never stop jumping until the bomb is planted.,6
+Nice Man:Don't shoot any enemies until you are the last one alive from your team.,7
 
-Giving Chances:On T side: Plant the bomb only after all CT's are dead.  On CT side: Defuse the bomb only when all T's are dead,8
-Foregiving:For each round you win try the best to let the other team also win a round,9
-No second thouhgts:Never stop walking forward,10
-Regretting:Only walk backwards in the current round if you have been the first player to die in the round before,11
+Giving Chances:On T  side: Plant the bomb only after all CT's are dead. ;On CT side: Defuse the bomb only when all T's are dead.,8
+Foregiving:For each round you win try the best to let the other team also win a round.,9
+No second thouhgts:Never stop walking forward.,10
+Regretting:Only walk backwards in the current round if you have been the first player to die in the round before.,11
 
-Home Defense:On T side: Stay on your spawn until you encounter an enemy. On CT side: Stay at your spawn until the bomb is planted our you encounter an enemy,12
+Home Defense:On T  side: Stay on your spawn until you encounter an enemy. ;On CT side: Stay at your spawn until the bomb is planted our you encounter an enemy.,12

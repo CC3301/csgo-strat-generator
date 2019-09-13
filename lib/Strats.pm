@@ -62,7 +62,7 @@ package Strats {
 
       # store data in strats hash
       $strats{$counter}{name}  = $strat_name;
-      $strats{$counter}{desc}  = $strat_info[0];
+      $strats{$counter}{desc}  = $strat_desc;
       $strats{$counter}{score} = $strat_info[1];
     
       # increment the index counter
