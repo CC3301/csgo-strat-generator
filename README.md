@@ -19,9 +19,20 @@
     take influence on these properties themselves. Setting a absurdly high difficulty
     will result in some properties being changed more or to harder levels than others.
 
+  - Difficulty technically has no fixed limit, however you will get an error when trying
+    to use a difficulty higher than 2 times the amout of strats in your data/strats.inv 
+    file. 
+
 ## WIP
   
-  - Hardcore mode
   - Strats
+
+## Planned
+  
+  - Debug system
+  - Hardcore Mode
+  - Make adding more strats or weapons, which might
+    be added in future csgo updates, to the '.inv'
+    files easier.
 
 **Have fun and remember to *NOT* overwrite your main config.**
