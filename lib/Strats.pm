@@ -18,7 +18,7 @@ package Strats {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # what strat score are we aiming for 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $target_score = shift || die "No target score was passed";
+    my $target_score = shift;
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
