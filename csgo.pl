@@ -5,7 +5,10 @@ use warnings;
 use lib 'lib';
 use Items;
 use Strats;
+use Hardcore;
 use Debug;
+
+$|--;
 
 ################################################################################
 # Main subroutine
@@ -69,6 +72,9 @@ sub Main() {
   # generate strat
   my %strat = Strats::GetStrat($difficulty);
 
+  # generate hardcore settings
+  my @hardcore_settings = Hardcore::GetHardcore($difficulty);
+
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # generate hardcore settings
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -112,6 +118,13 @@ sub Main() {
   if ($difficulty >= 2) {
     print "Utilities to use: " . $util1{name} . ", " . $util2{name} . "\n";
   }
+  if ($difficulty >= 6) {
+    print "\n";
+    print "Hardcore settings: \n";
+    foreach(@hardcore_settings) {
+      print "\t- $_\n";
+    }
+  }
   if ($difficulty >= 3) {
     print "\n";
     print "Strat: " . $strat{name} . "\n";
@@ -119,6 +132,7 @@ sub Main() {
     foreach(split ';', $strat{desc}) {
       print "\t$_\n";
     }
+    print "\nNOTE: Hardcore settings overwrite strats.\n";
   }
 
   # print the rest of the stats
@@ -131,6 +145,8 @@ sub Main() {
   # return
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Debug::Debug("csgo strat gen complete.");
+  Debug::Debug("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" .
+  "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n", 1);
   return(0);
   
 }

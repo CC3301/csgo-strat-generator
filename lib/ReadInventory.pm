@@ -21,6 +21,10 @@ package ReadInventory {
     my $item_type = shift || die "No item type passed";
     Debug::Debug("Preparing to read inventory file for item type: $item_type");
 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $line_count = 0;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the weapons inventory file 
@@ -42,12 +46,13 @@ package ReadInventory {
     # read the file line by line
     foreach my $line (<ITEMS>) {
       $item_list = $item_list . $line;
+      $line_count++;
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    Debug::Debug("Done.");
+    Debug::Debug("Done. Loaded $line_count data lines.");
     return($item_list);
   }
   1;

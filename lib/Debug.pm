@@ -7,12 +7,12 @@ package Debug {
   use warnings;
   use Cwd;
 
-  my $DEBUG_ACTIVE = 0;
+  my $DEBUG_ACTIVE = 1;
 
   ##############################################################################
   # Debug subroutine
   ##############################################################################
-  sub Debug($) {
+  sub Debug {
 
     # only produce debug output when its wanted
     unless($DEBUG_ACTIVE) {
@@ -23,6 +23,7 @@ package Debug {
     # what debug message should be written
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debug_message = shift;
+    my $raw = shift || 0;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # handle and write the debug message
@@ -39,7 +40,9 @@ package Debug {
     my $timestamp = localtime(time());
 
     # construct the message
-    $debug_message = "[$timestamp]: DEBUG: $debug_message\n";
+    unless($raw) {
+      $debug_message = "[$timestamp]: DEBUG: $debug_message\n";
+    }
 
     # open the debug file, write to it and close
     open my $fh, '>>', $debug_file or die "Failed to open debug log: $!";
