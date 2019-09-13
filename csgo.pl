@@ -69,6 +69,18 @@ sub Main() {
     %util2 = _generate_weapon_set('utils');
   }
 
+  # prevent kevlar and kevlar+helmet from being there together
+  if ($util1{buy} eq 'vesthelm') {
+    while($util2{buy} eq 'vest') {
+      %util2 = _generate_weapon_set('utils');
+    }
+  }
+  if ($util2{buy} eq 'vesthelm') {
+    while($util1{buy} eq 'vest') {
+      %util1 = _generate_weapon_set('utils');
+    }
+  }
+
   # generate strat
   my %strat = Strats::GetStrat($difficulty);
 
