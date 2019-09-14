@@ -25,11 +25,10 @@
 
 ## WIP
   
-  - Strats
+  - More strats and hardcore settings. 
 
 ## Planned
-  
-  - Hardcore Mode
+
   - Make adding more strats or weapons, which might
     be added in future csgo updates, to the '.inv'
     files easier.
