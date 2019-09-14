@@ -11,6 +11,7 @@ use ReadInventory;
 
 # debug for this main part of csgo-strat gen on or off
 my $DEBUG_STATE = 0;
+my $VERSION = 'v1.0';
 
 ################################################################################
 # Main subroutine
@@ -133,7 +134,7 @@ sub Main() {
   # print data
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   _local_debug("[MAIN] : Priting output");
-  print "CSGO strat-generator output:\n\n";
+  print "CSGO strat-generator $VERSION output:\n\n";
   print "===================================================================\n";
   
   if ($difficulty >= 0) {
