@@ -7,6 +7,7 @@ use Items;
 use Strats;
 use Hardcore;
 use Debug;
+use ReadInventory;
 
 # debug for this main part of csgo-strat gen on or off
 my $DEBUG_STATE = 0;
@@ -25,7 +26,16 @@ sub Main() {
   my $difficulty = $ARGV[0] || 0;
 
   unless($difficulty =~ /^-?\d+$/) {
-    die "Invalid difficulty";
+    if ($difficulty eq 'rules' || $difficulty eq 'r') {
+      _local_debug("[MAIN] : Showing rules");
+      _show_rules();
+      return(0);
+    } elsif($difficulty eq 'help' || $difficulty eq 'h') {
+      _local_debug("[MAIN] : Showing help");
+      _show_help();
+      return(0);
+    }
+    die "Invalid argument, use h or help for further information";
   }
 
   _local_debug("[MAIN] : Using difficulty: $difficulty");
@@ -142,6 +152,7 @@ sub Main() {
     foreach(@hardcore_settings) {
       print "\t- $_\n";
     }
+    print "\nNOTE: Hardcore settings overwrite strats and generated weapon sets.\n";
   }
   if ($difficulty >= 3) {
     print "\n";
@@ -150,7 +161,6 @@ sub Main() {
     foreach(split ';', $strat{desc}) {
       print "\t$_\n";
     }
-    print "\nNOTE: Hardcore settings overwrite strats.\n";
   }
 
   # print the rest of the stats
@@ -253,14 +263,54 @@ sub _check_for_duplicate {
 
 }
 
-##############################################################################
+################################################################################
+# _show_rules subroutine
+################################################################################
+sub _show_rules {
+
+  # read the rules from the rules inventory file
+  my $rules = ReadInventory::Read('rules');
+
+  # print out all the rules
+  foreach(split "\n", $rules) {
+    print "$_\n";
+  }
+
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # return
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  return;
+
+}
+
+################################################################################
+# _show_help subroutine
+################################################################################
+sub _show_help {
+
+  # read the help from the help inventory file
+  my $help = ReadInventory::Read('help');
+
+  # print out all the help
+  foreach(split "\n", $help) {
+    print "$_\n";
+  }
+
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # return
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  return;
+
+}
+
+################################################################################
 # _local_debug subroutine
-##############################################################################
+################################################################################
 sub _local_debug {
 
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get vars passed to the function
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my $msg = shift;
 
   # only produce debug output if it is enabled for this module
@@ -268,9 +318,9 @@ sub _local_debug {
     Debug::Debug($msg);
   }
 
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   return;
 
 }

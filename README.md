@@ -9,6 +9,8 @@
     It will then generate relatively boring output. Try adding 
     a number as an argument and see how the output changes.
 
+  - For extra help run the script with the 'help' argument.
+
 ## Difficulty
   
   - Difficulty is used to describe how much factors will be changed by this script.
