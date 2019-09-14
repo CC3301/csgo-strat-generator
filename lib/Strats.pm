@@ -11,6 +11,9 @@ package Strats {
   use Random;
   use Debug;
 
+  # debug state for this module
+  my $DEBUG_STATE = 0;
+
   ##############################################################################
   # GetStrat subroutine
   ##############################################################################
@@ -20,7 +23,7 @@ package Strats {
     # what strat score are we aiming for 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $target_score = shift;
-    Debug::Debug("Targetting strat score: $target_score");
+    _local_debug("[STRAT]: Targetting strat score: $target_score");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
@@ -56,7 +59,7 @@ package Strats {
         print "\tI suspect the error to be near to:\n";
         print "\t\t$strats[$counter]\n";
         print "\tin /data/strats.inv at line $h_counter\n";
-        Debug::Debug("Can't continue on malformed data line");
+        _local_debug("[STRAT]: Can't continue on malformed data line");
         die();
       }
 
@@ -69,7 +72,7 @@ package Strats {
       $counter++;
     }
 
-    Debug::Debug("Finished processing strategy inventory");
+    _local_debug("[STRAT]: Finished processing strategy inventory");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # tell the score calculation system what kind of score we are aiming for
@@ -82,12 +85,12 @@ package Strats {
       $return{name}  = "Anonymus";
       $return{desc}  = "I am sorry, but i didnt find any strat for you";
       $return{score} = 0;
-      Debug::Debug("Could not find matching strategy with score");
+      _local_debug("[STRAT]: Could not find matching strategy with score");
     } else {
       $return{name}  = $strats{$strat_index}{name};
       $return{desc}  = $strats{$strat_index}{desc};
       $return{score} = $strats{$strat_index}{score};
-      Debug::Debug("Found matching strategy with score: " . $return{score});
+      _local_debug("[STRAT]: Found matching strategy with score: " . $return{score});
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -130,12 +133,12 @@ package Strats {
       $counter++;
     }
 
-    Debug::Debug("Total strats loaded: $counter");
+    _local_debug("[STRAT]: Total strats loaded: $counter");
 
     # get a random score
     my $random_score = _get_random_score($target_score, @scores);
     while($random_score > @scores) {
-      Debug::Debug("Random score too high. Regenerating.");
+      _local_debug("[STRAT]: Random score too high. Regenerating.");
       $random_score = _get_random_score($target_score, @scores);
     }
 
@@ -183,7 +186,7 @@ package Strats {
   
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to function 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++``
     my $target_score = shift;
     my @scores = @_;
     
@@ -197,20 +200,20 @@ package Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # prevent the target score from getting out of scope
     if ($target_score > @scores) {
-      Debug::Debug("Targetted score ($target_score) is higher than available strats. Equalizing.");
+      _local_debug("[STRAT]: Targetted score ($target_score) is higher than available strats. Equalizing.");
       $target_score = @scores;
-      Debug::Debug("Target score is now set to $target_score");
+      _local_debug("[STRAT]: Target score is now set to $target_score");
     }
 
     # set a minimal score, we dont want lame strats at high difficulty
     if ($target_score > 5) {
-      Debug::Debug("Detected a difficulty higher than 5. Generating minimum score.");
+      _local_debug("[STRAT]: Detected a difficulty higher than 5. Generating minimum score.");
       $score_min = int($target_score - ($target_score / 2));
     }
 
     # prevent an infinite loop
     if ($score_min > @scores) {
-      Debug::Debug("The difficulty: $target_score is too high for generating" .
+      _local_debug("[STRAT]: The difficulty: $target_score is too high for generating" .
         " a strategy");
       die "difficulty out of scope";
     }
@@ -222,6 +225,27 @@ package Strats {
     # return data
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return($random_score);
+  }
+  
+  ##############################################################################
+  # _local_debug subroutine
+  ##############################################################################
+  sub _local_debug {
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to the function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $msg = shift;
+
+    # only produce debug output if it is enabled for this module
+    if ($DEBUG_STATE) {
+      Debug::Debug($msg);
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return;
   }
   1;
 }

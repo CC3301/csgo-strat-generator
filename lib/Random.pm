@@ -9,6 +9,9 @@ package Random {
   use lib '/lib';
   use Debug;
 
+  # debug output state for this module
+  my $DEBUG_STATE = 0;
+
   ##############################################################################
   # GetRandom subroutine
   ##############################################################################
@@ -24,7 +27,9 @@ package Random {
     # get random int 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $random_int = int(rand($max) + $min);
-    Debug::Debug("Random int: $random_int. MAX: $max; MIN: $min");
+    if ($DEBUG_STATE) {
+      _local_debug("[RAND] : Random int: $random_int. MAX: $max; MIN: $min");
+    }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
@@ -32,6 +37,27 @@ package Random {
     return $random_int; 
 
   }
+  ##############################################################################
+  # _local_debug subroutine
+  ##############################################################################
+  sub _local_debug {
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to the function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $msg = shift;
+
+    # only produce debug output if it is enabled for this module
+    if ($DEBUG_STATE) {
+      Debug::Debug($msg);
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return;
+  }
+
   # perl needs this
   1;
 }

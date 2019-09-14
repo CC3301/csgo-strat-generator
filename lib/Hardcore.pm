@@ -11,6 +11,9 @@ package Hardcore {
   use ReadInventory;
   use Debug;
 
+  # debug state for this module
+  my $DEBUG_STATE = 0;
+
   ##############################################################################
   # GetHardcore subroutine
   ##############################################################################
@@ -29,6 +32,12 @@ package Hardcore {
     my $counter = 0;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # state vars
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $state_random_fps  = 0;
+    my $state_random_sens = 0;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of hardcore settings available
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $settings_list = ReadInventory::Read('hardcore'); 
@@ -42,28 +51,28 @@ package Hardcore {
     if ($difficulty > 20) {
       $hardcore_count = 4;
       shift @return;
-      Debug::Debug("Running difficulty greater than 20. Generating $hardcore_count hardcore settings.");
+      _local_debug("[HARD] : Running difficulty greater than 20. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty > 15 ) {
       $hardcore_count = 3;
       shift @return;
-      Debug::Debug("Running difficulty greater than 15. Generating $hardcore_count hardcore settings.");
+      _local_debug("[HARD] : Running difficulty greater than 15. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty > 10 ) {
       $hardcore_count = 2;
       shift @return;
-      Debug::Debug("Running difficulty greater than 10. Generating $hardcore_count hardcore settings.");
+      _local_debug("[HARD] : Running difficulty greater than 10. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty > 5 ) {
       $hardcore_count = 1;
       shift @return;
-      Debug::Debug("Running difficulty greater than 5. Generating $hardcore_count hardcore settings.");
+      _local_debug("[HARD] : Running difficulty greater than 5. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty <= 5 ) {
-      Debug::Debug("Difficulty 5 or lower. Not generating any hardcore settings.");
+      _local_debug("[HARD] : Difficulty 5 or lower. Not generating any hardcore setting(s).");
       return(@return);
     }
 
     # at this point, we know the amout of hardcore settings we want 
     # so we can check if we even have enough
     if ($hardcore_count > @settings) {
-      Debug::Debug("Failed to generate hardcore settings");
+      _local_debug("[HARD] : Failed to generate hardcore settings");
       die "difficulty out of scope";
     }
 
@@ -76,21 +85,23 @@ package Hardcore {
       # make sure we dont duplicate
       foreach(@return) {
         while (substr($_, 0, 10) eq substr($current_setting, 0, 10)) {
-          Debug::Debug("Found duplicate hardcore setting($current_setting). Regenerating.");
+          _local_debug("[HARD] : Found duplicate hardcore setting($current_setting). Regenerating.");
           $current_setting = _generate_hard_core_setting(@settings);
         }
       }
       
       # filter for some specific settings
-      if ($current_setting eq "random_sens") {
-        my $random_sens = (Random::GetRandom($difficulty / 3) / 1.25) / 2 * 2;
+      if ($current_setting eq "random_sens" && ! $state_random_sens) {
+        my $random_sens = (Random::GetRandom($difficulty / 3) / 1.50) / 2 * 2;
         $current_setting = "Random mouse sensivity: $random_sens";
-        Debug::Debug("Found random sens setting. Generated random mouse sensivity: $random_sens");
+        $state_random_sens = 1;
+        _local_debug("[HARD] : Found random sens setting. Generated random mouse sensivity: $random_sens");
       }
-      if ($current_setting eq 'random_fps') {
+      if ($current_setting eq 'random_fps' && ! $state_random_fps) {
         my $random_fps = int((Random::GetRandom($difficulty * 10) / 0.75 * 1.25));
         $current_setting = "Random max_fps setting: $random_fps";
-        Debug::Debug("Found random fps setting. Generated random fps: $random_fps");
+        $state_random_fps = 1;
+        _local_debug("[HARD] : Found random fps setting. Generated random fps: $random_fps");
       }
 
       # push the current setting to the return array
@@ -137,6 +148,27 @@ package Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return($settings[$random_int]);   
 
+  }
+  
+  ##############################################################################
+  # _local_debug subroutine
+  ##############################################################################
+  sub _local_debug {
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to the function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $msg = shift;
+
+    # only produce debug output if it is enabled for this module
+    if ($DEBUG_STATE) {
+      Debug::Debug($msg);
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return;
   }
   1;
 }

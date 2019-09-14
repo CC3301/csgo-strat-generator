@@ -11,6 +11,9 @@ package Items {
   use ReadInventory;
   use Debug;
 
+  # debug state for this module
+  my $DEBUG_STATE = 0;
+
   #############################################################################
   # GetWeapon subroutine
   #############################################################################
@@ -20,7 +23,7 @@ package Items {
     # get item_type 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $item_type = shift || die "No item type passed";
-    Debug::Debug("Generating dataset for $item_type");
+    _local_debug("[ITEMS]: Generating dataset for $item_type");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
@@ -55,7 +58,7 @@ package Items {
         print "\tI suspect the error to be near to:\n";
         print "\t\t$items[$counter]\n";
         print "\tin /data/$item_type.inv at line $h_counter\n";
-        Debug::Debug("Can't continue on malformed data line");
+        _local_debug("[ITEMS]: Can't continue on malformed data line");
         die();
       }
 
@@ -68,7 +71,7 @@ package Items {
       $counter++;
     }
 
-    Debug::Debug("Finished processing $item_type inventory file");
+    _local_debug("[ITEMS]: Finished processing $item_type inventory file");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get a random number with the max being the index counter
@@ -83,6 +86,26 @@ package Items {
     
     return(%return);
 
+  }
+  ##############################################################################
+  # _local_debug subroutine
+  ##############################################################################
+  sub _local_debug {
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to the function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $msg = shift;
+
+    # only produce debug output if it is enabled for this module
+    if ($DEBUG_STATE) {
+      Debug::Debug($msg);
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return;
   }
   1;
 }

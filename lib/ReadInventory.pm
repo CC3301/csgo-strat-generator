@@ -9,6 +9,9 @@ package ReadInventory {
 
   use lib 'lib/';
   use Debug;
+
+  # debug state for this module
+  my $DEBUG_STATE = 0;
   
   ##############################################################################
   # Read subroutine
@@ -19,7 +22,7 @@ package ReadInventory {
     # get item type 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $item_type = shift || die "No item type passed";
-    Debug::Debug("Preparing to read inventory file for item type: $item_type");
+    _local_debug("[INV]  : Preparing to read inventory file for item type: $item_type");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars
@@ -40,7 +43,7 @@ package ReadInventory {
     # read the file 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $item_list = "";
-    Debug::Debug("Reading inventory file: $file");
+    _local_debug("[INV]  : Reading inventory file: $file");
     open(ITEMS, $file) or die "Failed to read $item_type inventory: $!";
 
     # read the file line by line
@@ -52,8 +55,29 @@ package ReadInventory {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    Debug::Debug("Done. Loaded $line_count data lines.");
+    _local_debug("[INV]  : Done. Loaded $line_count data lines.");
     return($item_list);
+  }
+  
+  ##############################################################################
+  # _local_debug subroutine
+  ##############################################################################
+  sub _local_debug {
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to the function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $msg = shift;
+
+    # only produce debug output if it is enabled for this module
+    if ($DEBUG_STATE) {
+      Debug::Debug($msg);
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return;
   }
   1;
 }

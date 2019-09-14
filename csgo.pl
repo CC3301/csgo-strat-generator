@@ -8,7 +8,8 @@ use Strats;
 use Hardcore;
 use Debug;
 
-$|--;
+# debug for this main part of csgo-strat gen on or off
+my $DEBUG_STATE = 0;
 
 ################################################################################
 # Main subroutine
@@ -16,7 +17,7 @@ $|--;
 sub Main() {
   
   # initialize the debug output
-  Debug::Debug("Starting csgo strat gen..");
+  _local_debug("[MAIN] : Starting csgo strat gen..");
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get difficulty
@@ -27,7 +28,7 @@ sub Main() {
     die "Invalid difficulty";
   }
 
-  Debug::Debug("Using difficulty: $difficulty");
+  _local_debug("[MAIN] : Using difficulty: $difficulty");
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # generate weapons 
@@ -69,15 +70,24 @@ sub Main() {
     %util2 = _generate_weapon_set('utils');
   }
 
-  # prevent kevlar and kevlar+helmet from being there together
+  $util1{buy} = 'vesthelm';
+  $util2{buy} = 'vesthelm';
+
+  # prevent kevlar and kevlar+helmet from being there together and remove duplicates
   if ($util1{buy} eq 'vesthelm') {
     while($util2{buy} eq 'vest') {
       %util2 = _generate_weapon_set('utils');
+      if (_check_for_free_choice($difficulty, %util2) || _check_for_duplicate(\%util1, \%util2)) {
+        $util2{buy} = 'vest';
+      }
     }
   }
   if ($util2{buy} eq 'vesthelm') {
     while($util1{buy} eq 'vest') {
       %util1 = _generate_weapon_set('utils');
+      if (_check_for_free_choice($difficulty, %util2) || _check_for_duplicate(\%util1, \%util2)) {
+        $util1{buy} = 'vest';
+      }
     }
   }
 
@@ -88,16 +98,18 @@ sub Main() {
   my @hardcore_settings = Hardcore::GetHardcore($difficulty);
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  # generate hardcore settings
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  #my %hardcore1 = Hardcore::GetHardcore($difficulty);
-
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # add all the costs together
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  my $total_cost = $pistol{cost} + $grenade1{cost} + $grenade2{cost} + 
-                   $weapon{cost} + $util1{cost} + $util2{cost};
-  Debug::Debug("Total cost of all items: $total_cost\$");
+  my $total_cost = 0;
+  if ($difficulty >= 0) {
+    $total_cost = $pistol{cost} + $weapon{cost};
+  }
+  if ($difficulty >= 1) {
+    $total_cost = $total_cost + $grenade1{cost} + $grenade2{cost};
+  }
+  if ($difficulty >= 2) {
+    $total_cost = $total_cost + $util1{cost} + $util2{cost};
+  }
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # add all the buy commands together
@@ -105,18 +117,15 @@ sub Main() {
   my $command_string = "";
   my @buys = ($pistol{buy}, $grenade1{buy}, $grenade2{buy}, $weapon{buy},
               $util1{buy}, $util2{buy}); 
-
-  Debug::Debug("Constructing the buy command");
   foreach(@buys) {
     next if $_ eq "NONE";
     $command_string = $command_string . " buy $_;";
   }
-  Debug::Debug("Buy command: $command_string");
    
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # print data
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  Debug::Debug("Priting output");
+  _local_debug("[MAIN] : Priting output");
   print "CSGO strat-generator output:\n\n";
   print "===================================================================\n";
   
@@ -156,8 +165,8 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  Debug::Debug("csgo strat gen complete.");
-  Debug::Debug("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" .
+  _local_debug("[MAIN] : csgo strat gen complete.");
+  _local_debug("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" .
   "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n", 1);
   return(0);
   
@@ -210,7 +219,7 @@ sub _check_for_free_choice {
   # check each dataset for free choice
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($item{buy} eq "NONE") {
-    Debug::Debug("Found free choice, running difficulty $difficulty. Regenerating");
+    _local_debug("[MAIN] : Found free choice, running difficulty $difficulty. Regenerating");
     return 1;
   }
 
@@ -236,7 +245,7 @@ sub _check_for_duplicate {
   # check each dataset for duplicates 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($item1->{buy} eq $item2->{buy}) {
-    Debug::Debug("Found duplicate item (" . $item1->{buy} . "). Regenerating.");
+    _local_debug("[MAIN] : Found duplicate item (" . $item1->{buy} . "). Regenerating.");
     return 1;
   }
 
@@ -244,6 +253,28 @@ sub _check_for_duplicate {
   # return data
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   return 0;
+
+}
+
+##############################################################################
+# _local_debug subroutine
+##############################################################################
+sub _local_debug {
+
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # get vars passed to the function
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  my $msg = shift;
+
+  # only produce debug output if it is enabled for this module
+  if ($DEBUG_STATE) {
+    Debug::Debug($msg);
+  }
+
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # return
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  return;
 
 }
 

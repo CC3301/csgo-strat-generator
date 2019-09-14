@@ -7,17 +7,10 @@ package Debug {
   use warnings;
   use Cwd;
 
-  my $DEBUG_ACTIVE = 1;
-
   ##############################################################################
   # Debug subroutine
   ##############################################################################
   sub Debug {
-
-    # only produce debug output when its wanted
-    unless($DEBUG_ACTIVE) {
-      return;
-    }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # what debug message should be written

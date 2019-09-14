@@ -26,7 +26,6 @@
 ## WIP
   
   - Strats
-  - Debug System
 
 ## Planned
   
