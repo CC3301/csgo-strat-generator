@@ -70,9 +70,6 @@ sub Main() {
     %util2 = _generate_weapon_set('utils');
   }
 
-  $util1{buy} = 'vesthelm';
-  $util2{buy} = 'vesthelm';
-
   # prevent kevlar and kevlar+helmet from being there together and remove duplicates
   if ($util1{buy} eq 'vesthelm') {
     while($util2{buy} eq 'vest') {
