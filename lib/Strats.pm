@@ -197,14 +197,24 @@ package Strats {
     # other vars 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $score_min = 0;
+    my $max_avail_score = 0;
+    my $min_avail_score = 0;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get the highest score available
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    for (@scores) {
+      $min_avail_score = $_ if !defined($min_avail_score) || $_ < $min_avail_score;
+      $max_avail_score = $_ if !defined($max_avail_score) || $_ > $max_avail_score;
+    }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get a random number with the max being target_score
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # prevent the target score from getting out of scope
     if ($target_score > @scores) {
-      _local_debug("[STRAT]: Targetted score ($target_score) is higher than available strats. Equalizing.");
-      $target_score = @scores;
+      _local_debug("[STRAT]: Targetted score ($target_score) is higher than available scores. Equalizing.");
+      $target_score = $max_avail_score;
       _local_debug("[STRAT]: Target score is now set to $target_score");
     }
 
