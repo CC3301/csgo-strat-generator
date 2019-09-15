@@ -12,7 +12,7 @@ package Hardcore {
   use Debug;
 
   # debug state for this module
-  my $DEBUG_STATE = 1;
+  my $DEBUG_STATE = 0;
 
   ##############################################################################
   # GetHardcore subroutine
