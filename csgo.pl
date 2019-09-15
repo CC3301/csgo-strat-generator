@@ -127,6 +127,7 @@ sub Main() {
               $grenade1{buy}, $grenade2{buy}, $weapon{buy});
   foreach(@buys) {
     next if $_ eq "NONE";
+    next if $_ eq "NULL";
     $command_string = $command_string . " buy $_;";
   }
    
@@ -138,14 +139,14 @@ sub Main() {
   print "===================================================================\n";
   
   if ($difficulty >= 0) {
-    print "Pistol to use   : " . $pistol{name}   . "\n";
-    print "Weapon to use   : " . $weapon{name}   . "\n";
+    print "Pistol   : " . $pistol{name}   . "\n";
+    print "Weapon   : " . $weapon{name}   . "\n";
   }
   if ($difficulty >= 1) {
-    print "Grenades to use : " . $grenade1{name} . ", " . $grenade2{name} . "\n";
+    print "Grenades : " . $grenade1{name} . ", " . $grenade2{name} . "\n";
   }
   if ($difficulty >= 2) {
-    print "Utilities to use: " . $util1{name} . ", " . $util2{name} . "\n";
+    print "Utilities: " . $util1{name} . ", " . $util2{name} . "\n";
   }
   if ($difficulty >= 6) {
     print "\n";

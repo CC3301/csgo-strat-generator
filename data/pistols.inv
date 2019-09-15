@@ -1,6 +1,6 @@
-Glock 18:glock,0
-USP-S:hkp2000,0
-P2000:hkp2000,0
+Glock 18:NULL,0
+USP-S:NULL,0
+P2000:NULL,0
 Dual Berretas:elite,400
 Five Seven:fiveseven,500
 Tec9:tec9,500
