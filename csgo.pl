@@ -124,7 +124,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my $command_string = "";
   my @buys = ($pistol{buy}, $grenade1{buy}, $grenade2{buy}, $weapon{buy},
-              $util1{buy}, $util2{buy}); 
+              $util1{buy}, $util2{buy});
   foreach(@buys) {
     next if $_ eq "NONE";
     $command_string = $command_string . " buy $_;";
