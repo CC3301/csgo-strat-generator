@@ -73,7 +73,7 @@ sub Main() {
       print "\t- $_\n";
     }
   }
-  if ($difficulty >= 2 && (! $state{disable}{utils} || $state{display_disabled}) ) {
+  if ($difficulty >= 2 && (! $state{disable}{utils} || $state{display_disabled})) {
     print "\n";
     print "Utilities: \n";
     foreach(split ';', $data{util_names}) {
