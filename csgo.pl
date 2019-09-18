@@ -3,11 +3,11 @@ use strict;
 use warnings;
 
 use lib 'lib';
-use Items;
-use Strats;
-use Hardcore;
-use Debug;
-use ReadInventory;
+use Feature::Items;
+use Feature::Strats;
+use Feature::Hardcore;
+use Util::Debug;
+use Util::ReadInventory;
 
 # debug for this main part of csgo-strat gen on or off
 my $DEBUG_STATE = 0;
@@ -100,10 +100,10 @@ sub Main() {
   }
 
   # generate strat
-  my %strat = Strats::GetStrat($difficulty);
+  my %strat = Feature::Strats::GetStrat($difficulty);
 
   # generate hardcore settings
-  my @hardcore_settings = Hardcore::GetHardcore($difficulty);
+  my @hardcore_settings = Feature::Hardcore::GetHardcore($difficulty);
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # add all the costs together
@@ -199,7 +199,7 @@ sub _generate_weapon_set {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # generate datasets
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  %item = Items::GetItem($type);
+  %item = Feature::Items::GetItem($type);
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return data
