@@ -1,17 +1,26 @@
 csgo-strat-generator v1.0 help:
----------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
 
 Usage: 
 
-  - csgo.pl <difficulty>  |  generates a game-rules set to use in your next match
-
-  Notes: 
-    - <difficulty> must be an integer
-  
+  - csgo.pl [<option> argument]
 
   Extra options:
 
-    - csgo.pl rules|r     |  Displays the rules that generally apply to this script
-    - csgo.pl help |h     |  Displays this message
+    --rules       | -r  |  Displays the rules that generally apply to this script
+    --help        | -h  |  Displays this message
+    --default-key | -k  |  Sets the key for the buy command output
+    --difficulty  | -d  |  Sets the difficulty
+    --force-hardcore    |  Generate hardcore settings even though they are currenlty disabled
+    --disable-pistol    |  Don't generate a pistol
+    --disable-weapon    |  Don't generate a weapon
+    --disable-grenades  |  Don't generate a grenade set
+    --disable-utils     |  Don't generate a utils set
+    --disable-strats    |  Don't generate a strat
+  
+  Options which require arguments:
+  
+    --difficulty  | -d  | Requires an integer as argument
+    --default-key | -k  | Requires only one character as argument
 
----------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
