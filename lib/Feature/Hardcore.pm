@@ -1,4 +1,4 @@
-package Hardcore {
+package Feature::Hardcore {
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # import modules
@@ -7,9 +7,9 @@ package Hardcore {
   use warnings;
 
   use lib 'lib/';
-  use Random;
-  use ReadInventory;
-  use Debug;
+  use Util::Random;
+  use Util::ReadInventory;
+  use Util::Debug;
 
   # debug state for this module
   my $DEBUG_STATE = 0;
@@ -40,7 +40,7 @@ package Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of hardcore settings available
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $settings_list = ReadInventory::Read('hardcore'); 
+    my $settings_list = Util::ReadInventory::Read('hardcore'); 
     my @settings = split "\n", $settings_list;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -92,13 +92,16 @@ package Hardcore {
       
       # filter for some specific settings
       if ($current_setting eq "random_sens" && ! $state_random_sens) {
-        my $random_sens = (Random::GetRandom($difficulty / 3) / 1.50) / 2 * 2;
+        my $random_sens = (Util::Random::GetRandom($difficulty / 3) / 1.50) / 2 * 2;
         $current_setting = "Random mouse sensivity: $random_sens";
         $state_random_sens = 1;
         _local_debug("[HARD] : Found random sens setting. Generated random mouse sensivity: $random_sens");
       }
       if ($current_setting eq 'random_fps' && ! $state_random_fps) {
-        my $random_fps = int((Random::GetRandom($difficulty * 10) / 0.75 * 1.25));
+        my $random_fps = _generate_random_fps($difficulty);
+        while ($random_fps < 60) {
+          $random_fps = _generate_random_fps($difficulty);
+        }
         $current_setting = "Random max_fps setting: $random_fps";
         $state_random_fps = 1;
         _local_debug("[HARD] : Found random fps setting. Generated random fps: $random_fps");
@@ -136,11 +139,11 @@ package Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get random int with the max being the size of the settings array
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    my $random_int = Random::GetRandom($settings_count);
+    my $random_int = Util::Random::GetRandom($settings_count);
 
     # double check to make sure that we really dont exceed the settings array size
     while($random_int == @settings) {
-      $random_int = Random::GetRandom($settings_count);
+      $random_int = Util::Random::GetRandom($settings_count);
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -149,7 +152,40 @@ package Hardcore {
     return($settings[$random_int]);   
 
   }
-  
+  ##############################################################################
+  # _generate_random_fps subroutine
+  ##############################################################################
+  sub _generate_random_fps {
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get data passed to function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $difficulty = shift;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $base_int = 25000;
+    if ($difficulty < 10) {
+      $base_int = 10000;
+    }
+    if ($difficulty > 20) {
+      $difficulty = 20;
+    }
+    $base_int = $base_int / $difficulty;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get random int with some magic
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+    my $random_fps = Util::Random::GetRandom($base_int / $difficulty);
+    _local_debug("[HARD] : Generated $random_fps for fps_max setting");
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return data
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return($random_fps);   
+  }
+
   ##############################################################################
   # _local_debug subroutine
   ##############################################################################
@@ -162,7 +198,7 @@ package Hardcore {
 
     # only produce debug output if it is enabled for this module
     if ($DEBUG_STATE) {
-      Debug::Debug($msg);
+      Util::Debug::Debug($msg);
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

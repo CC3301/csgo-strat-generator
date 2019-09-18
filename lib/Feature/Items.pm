@@ -1,4 +1,4 @@
-package Items {
+package Feature::Items {
 
   #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # import modules
@@ -7,9 +7,9 @@ package Items {
   use warnings;
 
   use lib 'lib/';
-  use Random;
-  use ReadInventory;
-  use Debug;
+  use Util::Random;
+  use Util::ReadInventory;
+  use Util::Debug;
 
   # debug state for this module
   my $DEBUG_STATE = 0;
@@ -34,7 +34,7 @@ package Items {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of weapons available and store them in a hash table
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $item_list = ReadInventory::Read($item_type); 
+    my $item_list = Util::ReadInventory::Read($item_type); 
     my @items = split "\n", $item_list;
     
     # go through all weapons and get their stats
@@ -76,7 +76,7 @@ package Items {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get a random number with the max being the index counter
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $random_int = Random::GetRandom($counter);
+    my $random_int = Util::Random::GetRandom($counter);
 
     # return whatever is stored in the items hash at the random index
     my %return;
@@ -99,7 +99,7 @@ package Items {
 
     # only produce debug output if it is enabled for this module
     if ($DEBUG_STATE) {
-      Debug::Debug($msg);
+      Util::Debug::Debug($msg);
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

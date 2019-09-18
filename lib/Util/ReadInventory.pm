@@ -1,4 +1,4 @@
-package ReadInventory {
+package Util::ReadInventory {
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # import modules
@@ -8,7 +8,7 @@ package ReadInventory {
   use Cwd;
 
   use lib 'lib/';
-  use Debug;
+  use Util::Debug;
 
   # debug state for this module
   my $DEBUG_STATE = 0;
@@ -32,7 +32,7 @@ package ReadInventory {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the weapons inventory file 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $file = getcwd() . "/data/$item_type.inv";
+    my $file = getcwd() . "/data/inventory/$item_type.inv";
 
     # check if the file exists
     if (  ! -f $file) {
@@ -71,7 +71,7 @@ package ReadInventory {
 
     # only produce debug output if it is enabled for this module
     if ($DEBUG_STATE) {
-      Debug::Debug($msg);
+      Util::Debug::Debug($msg);
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

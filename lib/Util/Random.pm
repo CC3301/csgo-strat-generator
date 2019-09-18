@@ -1,4 +1,4 @@
-package Random {
+package Util::Random {
  
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # import modules
@@ -7,7 +7,7 @@ package Random {
   use warnings;
   
   use lib '/lib';
-  use Debug;
+  use Util::Debug;
 
   # debug output state for this module
   my $DEBUG_STATE = 0;
@@ -57,7 +57,7 @@ package Random {
 
     # only produce debug output if it is enabled for this module
     if ($DEBUG_STATE) {
-      Debug::Debug($msg);
+      Util::Debug::Debug($msg);
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

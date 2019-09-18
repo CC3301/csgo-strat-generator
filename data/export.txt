@@ -1,0 +1,23 @@
+csgo-strat-generator exported output
+===========================================================
+Pistol: Desert Eagle
+Weapon: SSG 08
+
+Grenades:
+	- Decoy Grenade
+	- Molotov
+
+Utilities:
+	- Zeus
+	- Kevlar and Helmet
+
+Strat: B Stack
+	On T  side: Go B every round. 
+	On CT side: Stack on B and rotate only on bomb plant.
+
+Difficulty: 21
+Total Cost: 4200$
+Command:
+	bind c "buy deagle; buy taser; buy vesthelm; buy decoy; buy molotov; buy ssg08; "
+
+===========================================================

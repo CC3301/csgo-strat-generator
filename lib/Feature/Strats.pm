@@ -1,4 +1,4 @@
-package Strats {
+package Feature::Strats {
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # import modules
@@ -7,9 +7,9 @@ package Strats {
   use warnings;
 
   use lib 'lib/';
-  use ReadInventory;
-  use Random;
-  use Debug;
+  use Util::ReadInventory;
+  use Util::Random;
+  use Util::Debug;
 
   # debug state for this module
   my $DEBUG_STATE = 0;
@@ -35,7 +35,7 @@ package Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of strats available and store them in a hash 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $strat_list = ReadInventory::Read('strats');
+    my $strat_list = Util::ReadInventory::Read('strats');
     my @strats = split "\n", $strat_list;
 
     # go through all strats and get their stats
@@ -232,7 +232,7 @@ package Strats {
     }
 
     # get the random score
-    my $random_score = Random::GetRandom($target_score, $score_min);
+    my $random_score = Util::Random::GetRandom($target_score, $score_min);
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
@@ -257,7 +257,7 @@ package Strats {
 
     # randomize the array
     while($i--) {
-      my $j = Random::GetRandom($i+1);
+      my $j = Util::Random::GetRandom($i+1);
       @$deck[$i,$j] = @$deck[$j,$i];
     }
 
@@ -278,7 +278,7 @@ package Strats {
 
     # only produce debug output if it is enabled for this module
     if ($DEBUG_STATE) {
-      Debug::Debug($msg);
+      Util::Debug::Debug($msg);
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
