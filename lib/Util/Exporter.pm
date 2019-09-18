@@ -77,14 +77,51 @@ package Util::Exporter {
       print $fh "===========================================================\n";
 
     close $fh;
-    
+
+    # write to csgo config directory
+    if ($state->{write_csgo}) { 
+      if ($state->{os_type} eq 'windows') {
+
+        my $dir = "C:/'Program Files (x86)'/Steam/userdata/*";
+        my @userdata_dir = glob ($dir);
+
+        foreach (@userdata_dir) {
+          open(my $fh1, '>', "$_/730/local/cfg/csgo-strat-gen.cfg") or warn "failed to write direct-apply config: $!\n for cfg_dir: $_";
+            print $fh1 "bind $state->{default_key} \"$data->{command_string}\"\n";
+          close $fh;
+        }
+      } else {
+        _local_debug("[EXPRT]: This feature is not available on $state->{os_type} right now.");
+        warn "Cannot write to csgo config directory, feature not supported for $state->{os_type}";
+      }
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return();
 
   }
+  ##############################################################################
+  # _local_debug subroutine
+  ##############################################################################
+  sub _local_debug {
 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to the function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $msg = shift;
+
+    # only produce debug output if it is enabled for this module
+    if ($DEBUG_STATE) {
+      Util::Debug::Debug($msg);
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return;
+  }
   # perl needs this
   1;
 }

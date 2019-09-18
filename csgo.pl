@@ -43,6 +43,18 @@ sub Main() {
     _local_debug("[MAIN] : Early exit. Rules were displayed.");
     exit();
   }
+  
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # get os type
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  my $OS_TYPE = $^O;
+  if ($OS_TYPE eq 'MSWin32') {
+    $state{os_type} = 'windows';
+  } elsif ($OS_TYPE eq 'linux') {
+    $state{os_type} = 'linux';
+  } elsif ($OS_TYPE eq 'darwin') {
+    $state{os_type} = 'mac';
+  } 
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get dataset 

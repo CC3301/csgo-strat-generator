@@ -28,6 +28,8 @@
 ## WIP
   
   - More strats and hardcore settings. 
+  - Strats system
+  - Hardcore system (currently disabled)
 
 ## Planned
 

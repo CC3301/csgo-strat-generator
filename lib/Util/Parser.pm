@@ -9,7 +9,7 @@ package Util::Parser {
   use lib 'lib/';
   use Util::Debug;
 
-  my $DEBUG_STATE = 1;
+  my $DEBUG_STATE = 0;
 
   #############################################################################
   # Parse subroutine
@@ -78,6 +78,8 @@ package Util::Parser {
         $state{display_disabled} = 1;
       } elsif ($switch eq '--write') {
         $state{write_output} = 1;
+      } elsif ($switch eq '--write-csgo') {
+        $state{write_csgo} = 1;
       } else {
 
         foreach(@nexts) {
@@ -113,6 +115,7 @@ package Util::Parser {
     _local_debug("[PARSE]: Setting: disable->strats   => $state{disable}{strats}");
     _local_debug("[PARSE]: Setting: display_disabled  => $state{display_disabled}");
     _local_debug("[PARSE]: Setting: write_output      => $state{write_output}");
+    _local_debug("[PARSE]: Setting: write_csgo        => $state{write_csgo}");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return settings 
@@ -138,6 +141,7 @@ package Util::Parser {
     $state{default_key}      = 'c';
     $state{display_disabled} = 0; 
     $state{write_output}     = 0;
+    $state{write_csgo}       = 0;
     
     $state{disable}{pistol}   = 0;
     $state{disable}{weapon}   = 0;
