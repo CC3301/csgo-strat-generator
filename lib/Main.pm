@@ -138,15 +138,26 @@ package Main {
 
     _local_debug("[MAIN] : Processing cost and buy command data..");
 
+    #split into ct and t prices
+    ($pistol{cost_ct},   $pistol{cost_t})   = split '-', $pistol{cost};
+    ($weapon{cost_ct},   $weapon{cost_t})   = split '-', $weapon{cost};
+    ($grenade1{cost_ct}, $grenade1{cost_t}) = split '-', $grenade1{cost};
+    ($grenade2{cost_ct}, $grenade2{cost_t}) = split '-', $grenade2{cost};
+    ($util1{cost_ct},    $util1{cost_t})    = split '-', $util1{cost};
+    ($util2{cost_ct},    $util2{cost_t})    = split '-', $util2{cost};
+
     # calculate the total cost
     if($difficulty >= 0) {
-      $data{total_cost} = $pistol{cost} + $weapon{cost};
+      $data{total_cost_ct} = $pistol{cost_ct} + $weapon{cost_ct};
+      $data{total_cost_t}  = $pistol{cost_t}  + $weapon{cost_t};
     }
     if($difficulty >= 1) {
-      $data{total_cost} = $data{total_cost} + $grenade1{cost} + $grenade2{cost};
+      $data{total_cost_ct} = $data{total_cost_ct} + $grenade1{cost_ct} + $grenade2{cost_ct};
+      $data{total_cost_t}  = $data{total_cost_t}  + $grenade1{cost_t}  + $grenade2{cost_t};
     }
     if($difficulty >= 2) {
-      $data{total_cost} = $data{total_cost} + $util1{cost} + $util2{cost};
+      $data{total_cost_ct} = $data{total_cost_ct} + $util1{cost_ct} + $util2{cost_ct};
+      $data{total_cost_t}  = $data{total_cost_t}  + $util1{cost_t}  + $util2{cost_t};
     }
 
     # build the command string for buying all the items

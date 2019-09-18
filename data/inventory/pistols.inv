@@ -1,9 +1,7 @@
-Glock 18:NULL,0
-USP-S:NULL,0
-P2000:NULL,0
-Dual Berretas:elite,400
-Five Seven:fiveseven,500
-Tec9:tec9,500
-Desert Eagle:deagle,700
-R8 Revolver:deagle,600
-Free Choice:NONE,0
+Glock 18 / USP-S:NULL,0-0
+Glock 18 / P2000:NULL,0-0
+Dual Berretas:elite,400-400
+Tec 9 / Five Seven:fiveseven,500-500
+Desert Eagle:deagle,700-700
+R8 Revolver:deagle,600-600
+Free Choice:NONE,0-0

@@ -112,7 +112,13 @@ sub Main() {
   # print the rest of the stats
   print "===================================================================\n";
   print "\nDifficulty : $difficulty\n";
-  print "Total Cost : $data{total_cost}\$\n\n";
+
+  if ($data{total_cost_ct} == $data{total_cost_t}) {
+    print "Total Cost   : $data{total_cost_ct}\$\n\n";
+  } else {
+    print "Total Cost T : $data{total_cost_t}\$\n";
+    print "Total Cost CT: $data{total_cost_ct}\$\n\n";
+  }
   print "Command:\n\tbind $state{default_key} \"$data{command_string}\"\n";
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
