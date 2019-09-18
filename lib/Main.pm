@@ -99,22 +99,28 @@ package Main {
     if ($state{disable}{pistol}) {
       $pistol{name} = 'Free choice';
       $pistol{cost} = 0;
+      $pistol{buy} = 'NULL';
     }
     if ($state{disable}{weapon}) {
       $weapon{name} = 'Free choice';
       $weapon{cost} = 0;
+      $weapon{buy} = 'NULL';
     }
     if ($state{disable}{grenades}) {
       $grenade1{name} = 'Free choice';
       $grenade2{name} = 'Free choice';
       $grenade1{cost} = 0;
       $grenade2{cost} = 0;
+      $grenade1{buy} = 'NULL';
+      $grenade2{buy} = 'NULL';
     }
     if ($state{disable}{utils}) {
       $util1{name} = 'Free choice';
       $util2{name} = 'Free choice';
       $util1{cost} = 0;
       $util2{cost} = 0;
+      $util1{buy} = 'NULL';
+      $util2{buy} = 'NULL';
     }
     if ($state{disable}{hardcore}) {
       my $hardcore_counter = 0;

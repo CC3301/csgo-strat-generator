@@ -9,7 +9,7 @@ package Util::Parser {
   use lib 'lib/';
   use Util::Debug;
 
-  my $DEBUG_STATE = 0;
+  my $DEBUG_STATE = 1;
 
   #############################################################################
   # Parse subroutine
@@ -41,7 +41,7 @@ package Util::Parser {
     foreach my $switch (@args) {
 
       $skip = 0;
-      _local_debug("[PARSE]: Handling option: $switch");
+      _local_debug("[PARSE]: Handling option: $switch as $counter option");
 
       if ($switch eq '-d' || $switch eq '--difficulty') {
         if ($args[$counter+1] !~ /^-?\d+$/) {
@@ -69,9 +69,10 @@ package Util::Parser {
         $state{disable}{hardcore} = 0;
       } elsif ($switch eq '-k' || $switch eq '--default-key') {
         if (length($args[$counter+1]) != 1 ) {
-          _local_error("--default-key | -k :: options requires single character argument");
+          _local_error("--default-key | -k :: option requires single character argument");
         }
         $state{default_key} = $args[$counter+1];
+        print "TEST: $args[$counter+1]\n";
         push @nexts, $args[$counter+1];
       } elsif ($switch eq '--display-disabled') {
         $state{display_disabled} = 1;
@@ -86,7 +87,11 @@ package Util::Parser {
           }
         }
         
-        next if $skip;
+        
+        if ($skip) {
+          $counter++;
+          next;
+        }
         _local_error("general error in command line options. Unknown parameter.");
 
       }
