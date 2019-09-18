@@ -97,18 +97,31 @@ package Main {
     # modify data by settings 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if ($state{disable}{pistol}) {
+      $pistol{name} = 'Free choice';
       $pistol{cost} = 0;
     }
     if ($state{disable}{weapon}) {
+      $weapon{name} = 'Free choice';
       $weapon{cost} = 0;
     }
     if ($state{disable}{grenades}) {
+      $grenade1{name} = 'Free choice';
+      $grenade2{name} = 'Free choice';
       $grenade1{cost} = 0;
       $grenade2{cost} = 0;
     }
     if ($state{disable}{utils}) {
+      $util1{name} = 'Free choice';
+      $util2{name} = 'Free choice';
       $util1{cost} = 0;
       $util2{cost} = 0;
+    }
+    if ($state{disable}{hardcore}) {
+      my $hardcore_counter = 0;
+      foreach(@hardcore) {
+        $hardcore[$hardcore_counter] = 'None';
+        $hardcore_counter++;
+      }
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

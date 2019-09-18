@@ -55,27 +55,27 @@ sub Main() {
   print "CSGO strat-generator $VERSION output:\n\n";
   print "===================================================================\n";
   
-  if ($difficulty >= 0 && ! $state{disable}{pistol}) {
+  if ($difficulty >= 0 && (! $state{disable}{pistol} || $state{display_disabled})) {
     print "Pistol   : " . $data{pistol_name}   . "\n";
   }
-  if ($difficulty >= 0 && ! $state{disable}{weapon}) {
+  if ($difficulty >= 0 && (! $state{disable}{weapon} || $state{display_disabled})) {
     print "Weapon   : " . $data{weapon_name}   . "\n";
   }
-  if ($difficulty >= 1 && ! $state{disable}{grenades}) {
+  if ($difficulty >= 1 && (! $state{disable}{grenades} || $state{display_disabled})) {
     print "\n";
     print "Grenades: \n";
     foreach(split ';', $data{grenade_names}) {
       print "\t- $_\n";
     }
   }
-  if ($difficulty >= 2 && ! $state{disable}{utils}) {
+  if ($difficulty >= 2 && (! $state{disable}{utils} || $state{display_disabled}) ) {
     print "\n";
     print "Utilities: \n";
     foreach(split ';', $data{util_names}) {
       print "\t- $_\n";
     }
   }
-  if ($difficulty >= 6 && ! $state{disable}{hardcore}) {
+  if ($difficulty >= 6 && (! $state{disable}{hardcore} || $state{display_disabled})) {
     print "\n";
     print "Hardcore settings: \n";
     foreach(split ';', $data{hardcore}) {
@@ -83,7 +83,7 @@ sub Main() {
     }
     print "\nNOTE: Hardcore settings overwrite strats and generated weapon sets.\n";
   }
-  if ($difficulty >= 3 && ! $state{disable}{strats}) {
+  if ($difficulty >= 3 && (! $state{disable}{strats} || $state{display_disabled})) {
     print "\n";
     print "Strat: " . $data{strat_name} . "\n";
     print "Description:\n";

@@ -73,6 +73,8 @@ package Util::Parser {
         }
         $state{default_key} = $args[$counter+1];
         push @nexts, $args[$counter+1];
+      } elsif ($switch eq '--display-disabled') {
+        $state{display_disabled} = 1;
       } else {
 
         foreach(@nexts) {
@@ -102,7 +104,7 @@ package Util::Parser {
     _local_debug("[PARSE]: Setting: disable->utils    => $state{disable}{utils}");
     _local_debug("[PARSE]: Setting: disable->hardcore => $state{disable}{hardcore}");
     _local_debug("[PARSE]: Setting: disable->strats   => $state{disable}{strats}");
-    
+    _local_debug("[PARSE]: Setting: display_disabled  => $state{display_disabled}");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return settings 
@@ -122,10 +124,11 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %state;
 
-    $state{help}        = 0;
-    $state{rules}       = 0;
-    $state{difficulty}  = 0;
-    $state{default_key} = 'c';
+    $state{help}             = 0;
+    $state{rules}            = 0;
+    $state{difficulty}       = 0;
+    $state{default_key}      = 'c';
+    $state{display_disabled} = 0; 
     
     $state{disable}{pistol}   = 0;
     $state{disable}{weapon}   = 0;

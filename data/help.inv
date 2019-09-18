@@ -17,6 +17,7 @@ Usage:
     --disable-grenades  |  Don't generate a grenade set
     --disable-utils     |  Don't generate a utils set
     --disable-strats    |  Don't generate a strat
+    --display-disabled  |  Display settings even if they are disabled
   
   Options which require arguments:
   
