@@ -72,7 +72,6 @@ package Util::Parser {
           _local_error("--default-key | -k :: option requires single character argument");
         }
         $state{default_key} = $args[$counter+1];
-        print "TEST: $args[$counter+1]\n";
         push @nexts, $args[$counter+1];
       } elsif ($switch eq '--display-disabled') {
         $state{display_disabled} = 1;
@@ -80,6 +79,15 @@ package Util::Parser {
         $state{write_output} = 1;
       } elsif ($switch eq '--write-csgo') {
         $state{write_csgo} = 1;
+      } elsif ($switch eq '--doc') {
+        if (length($args[$counter+1]) == 0) {
+          _local_error("--doc :: options requires string type argument");
+        }
+        $state{display_doc} = 1;
+        $state{display_doc_type} = $args[$counter+1];
+        push @nexts, $args[$counter+1];
+      } elsif ($switch eq '--doc-list') {
+        $state{doc_list} = 1;
       } else {
 
         foreach(@nexts) {
@@ -116,6 +124,9 @@ package Util::Parser {
     _local_debug("[PARSE]: Setting: display_disabled  => $state{display_disabled}");
     _local_debug("[PARSE]: Setting: write_output      => $state{write_output}");
     _local_debug("[PARSE]: Setting: write_csgo        => $state{write_csgo}");
+    _local_debug("[PARSE]: Setting: display_doc       => $state{display_doc}");
+    _local_debug("[PARSE]: Setting: display_doc_type  => $state{display_doc_type}");
+    _local_debug("[PARSE]: Setting: doc_list          => $state{doc_list}");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return settings 
@@ -135,14 +146,17 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %state;
 
-    $state{help}             = 0;
-    $state{rules}            = 0;
-    $state{difficulty}       = 0;
-    $state{default_key}      = 'c';
-    $state{display_disabled} = 0; 
-    $state{write_output}     = 0;
-    $state{write_csgo}       = 0;
-    
+    $state{help}              = 0;
+    $state{rules}             = 0;
+    $state{difficulty}        = 0;
+    $state{default_key}       = 'c';
+    $state{display_disabled}  = 0; 
+    $state{write_output}      = 0;
+    $state{write_csgo}        = 0;
+    $state{display_doc}       = 0;
+    $state{display_doc_type}  = '';
+    $state{doc_list}          = 0;
+
     $state{disable}{pistol}   = 0;
     $state{disable}{weapon}   = 0;
     $state{disable}{grenades} = 0;

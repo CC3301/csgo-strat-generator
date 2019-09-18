@@ -30,6 +30,7 @@
   - More strats and hardcore settings. 
   - Strats system
   - Hardcore system (currently disabled)
+  - Documentation (current focus)
 
 ## Planned
 

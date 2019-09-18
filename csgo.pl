@@ -7,6 +7,7 @@ use Util::Debug;
 use Util::Parser;
 use Util::Help;
 use Util::Exporter;
+use Util::Doc;
 use Main;
 
 # debug for this main part of csgo-strat gen on or off
@@ -43,7 +44,17 @@ sub Main() {
     _local_debug("[MAIN] : Early exit. Rules were displayed.");
     exit();
   }
-  
+  if ($state{display_doc}) {
+    Util::Doc::Display($state{display_doc_type});
+    _local_debug("[MAIN] : Early exit. Documentation was requested.");
+    exit();
+  }
+  if ($state{doc_list}) {
+    Util::Doc::List();
+    _local_debug("[MAIN] : Early exit. Documentation was listed.");
+    exit();
+  }
+
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get os type
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
