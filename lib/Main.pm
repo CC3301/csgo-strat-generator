@@ -13,7 +13,7 @@ package Main {
   use Feature::Items;
   use Feature::Strats;
 
-  my $DEBUG_STATE = 1;
+  my $DEBUG_STATE = 0;
 
   #############################################################################
   # Run subroutine

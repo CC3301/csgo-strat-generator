@@ -32,7 +32,7 @@ package Util::ReadInventory {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the weapons inventory file 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $file = getcwd() . "/data/$item_type.inv";
+    my $file = getcwd() . "/data/inventory/$item_type.inv";
 
     # check if the file exists
     if (  ! -f $file) {

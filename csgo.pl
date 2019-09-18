@@ -6,10 +6,11 @@ use lib 'lib/';
 use Util::Debug;
 use Util::Parser;
 use Util::Help;
+use Util::Exporter;
 use Main;
 
 # debug for this main part of csgo-strat gen on or off
-my $DEBUG_STATE = 1;
+my $DEBUG_STATE = 0;
 my $VERSION = 'v1.0';
 
 ################################################################################
@@ -47,6 +48,10 @@ sub Main() {
   # get dataset 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my %data = Main::Run($difficulty, %state);
+
+  if ($state{write_output}) {
+    Util::Exporter::Export(\%data, \%state);
+  }
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # print output 
@@ -96,7 +101,7 @@ sub Main() {
   print "===================================================================\n";
   print "\nDifficulty : $difficulty\n";
   print "Total Cost : $data{total_cost}\$\n\n";
-  print "Command: bind $state{default_key} \"$data{command_string}\"\n";
+  print "Command:\n\tbind $state{default_key} \"$data{command_string}\"\n";
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return

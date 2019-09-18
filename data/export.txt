@@ -1,0 +1,26 @@
+csgo-strat-generator exported output
+===========================================================
+Pistol: Free choice
+Weapon: Mag 7
+
+Grenades:
+	- Incendiary Grenade
+	- Flashbang
+
+Utils:
+	- Zeus
+	- Kevlar and Helmet
+
+Hardcore settings:
+	- None
+	- None
+
+Strat: Anonymus
+	I am sorry, but i didnt find any strat for you
+
+Difficulty: 11
+Total Cost: 3300
+Command:
+	bind c "buy deagle; buy taser; buy vesthelm; buy incgrenade; buy flashbang; buy mag7; "
+
+===========================================================
