@@ -1,0 +1,23 @@
+Information about the csgo-strat gen config file
+
+  Basically, every option you can set with the command line arguments can also be set
+  in the config. There is a certain hierarchy to this concept:
+  
+  - Default is set in the source code
+  - Config overwrites Default
+  - Command line options overwrite Config
+
+  A list of config keys:
+
+    - difficulty
+    - default_key
+    - disable.pistol
+    - disable.weapon
+    - disable.grenades
+    - disable.utils
+    - disable.hardcore
+    - disable.strats
+    - display_disabled
+    - write_output
+    - write_csgo
+

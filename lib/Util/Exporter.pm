@@ -30,7 +30,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # write output 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    open(my $fh, '>', 'data/export.txt');
+    open(my $fh, '>', 'export.txt');
     
       print $fh "csgo-strat-generator exported output\n";
       print $fh "===========================================================\n";

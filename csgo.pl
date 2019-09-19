@@ -121,7 +121,7 @@ sub Main() {
 
   # print the rest of the stats
   print "===================================================================\n";
-  print "\nDifficulty : $difficulty\n";
+  print "\nDifficulty   : $difficulty\n";
 
   if ($data{total_cost_ct} == $data{total_cost_t}) {
     print "Total Cost   : $data{total_cost_ct}\$\n\n";
