@@ -7,10 +7,18 @@ Information about the csgo-strat gen config file
   - Config overwrites Default
   - Command line options overwrite Config
 
-  A list of config keys:
+  
+  To use this function, create a file called 'config' inside the data folder. The
+  following list of config keys can be set, grouped by the type of setting you 
+  can add to them.
 
+  Integer:
     - difficulty
+
+  String:
     - default_key
+
+  Boolean:
     - disable.pistol
     - disable.weapon
     - disable.grenades
@@ -21,3 +29,19 @@ Information about the csgo-strat gen config file
     - write_output
     - write_csgo
 
+  
+
+  When it comes to the config file syntax, you might wonder why things look like 
+  they look. Basically its a key-value storage. Internally some settings are grouped.
+  This is where the '.' comes into play. It seperates the setting group by the setting
+  itself. So in the case of 'disable.pistol', 'disable' is the setting group and
+  'pistol' is the setting name. Followed by a colon comes the value. Here are some
+  examples:
+
+    - disable.pistol:1
+    - default_key:c
+    - difficulty:10
+
+  If there is a different type of value there, which is not of the expected type,
+  the script will die. Usually you get a pretty good representation of where the
+  error is in the config file.

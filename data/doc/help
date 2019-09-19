@@ -5,6 +5,7 @@ Usage:
 
   - csgo.pl [<option> argument]
 
+
   Extra options:
 
     --rules       | -r  |  Displays the rules that generally apply to this script
@@ -30,9 +31,10 @@ Usage:
     --default-key | -k  | Requires only one character as argument
     --doc               | Requires a string as argument
 
+
   Other Notes:
 
   *1  |  This Feature is experimental and currently only available on Windows. It requires the --write
-      |  Option to be set aswell.
+      |  option to be set aswell.
 
 ---------------------------------------------------------------------------------------------------------
