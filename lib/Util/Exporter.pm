@@ -9,7 +9,7 @@ package Util::Exporter {
   use lib 'lib/';
   use Util::Debug;
 
-  my $DEBUG_STATE = 0;
+  my $DEBUG_STATE = 1;
 
   #############################################################################
   # Export subroutine

@@ -1,0 +1,22 @@
+csgo-strat-generator exported output
+===========================================================
+Pistol: Dual Berretas
+Weapon: MP 5
+
+Grenades:
+	- Decoy Grenade
+	- Flashbang
+
+Utilities:
+	- Kevlar and Helmet
+	- Defuse/Rescue Kit
+
+Strat: Anonymus
+	I am sorry, but i didnt find any strat for you
+
+Difficulty: 10
+Total Cost: $
+Command:
+	bind c "buy elite; buy vesthelm; buy defuser; buy decoy; buy flashbang; buy mp7; "
+
+===========================================================

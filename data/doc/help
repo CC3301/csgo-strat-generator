@@ -32,6 +32,7 @@ Usage:
 
   Other Notes:
 
-  *1  |  This Feature is experimental and currently only available on Windows.
+  *1  |  This Feature is experimental and currently only available on Windows. It requires the --write
+      |  Option to be set aswell.
 
 ---------------------------------------------------------------------------------------------------------

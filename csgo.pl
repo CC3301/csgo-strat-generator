@@ -5,7 +5,6 @@ use warnings;
 use lib 'lib/';
 use Util::Debug;
 use Util::Parser;
-use Util::Help;
 use Util::Exporter;
 use Util::Doc;
 use Main;
@@ -35,12 +34,12 @@ sub Main() {
   # check if help or rules are required 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($state{help}) {
-    Util::Help::ShowMsg('help');
+    Util::Doc::Display('help');
     _local_debug("[MAIN] : Early exit. Help was displayed.");
     exit();
   }
   if ($state{rules}) {
-    Util::Help::ShowMsg('rules');
+    Util::Doc::Display('rules');
     _local_debug("[MAIN] : Early exit. Rules were displayed.");
     exit();
   }
