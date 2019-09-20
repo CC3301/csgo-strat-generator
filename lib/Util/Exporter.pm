@@ -6,11 +6,7 @@ package Util::Exporter {
   use strict;
   use warnings;
   
-  use lib 'lib/';
-  use Util::Debug;
   use MIME::Base64;
-
-  my $DEBUG_STATE = 1;
 
   #############################################################################
   # Export subroutine
@@ -20,6 +16,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get data passed to the function
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $data  = shift;
     my $state = shift;
 
@@ -92,14 +89,14 @@ package Util::Exporter {
           close $fh;
         }
       } else {
-        _local_debug("[EXPRT]: This feature is not available on $state->{os_type} right now.");
+        $debugger->write("[EXPRT]: This feature is not available on $state->{os_type} right now.");
         warn "Cannot write to csgo config directory, feature not supported for $state->{os_type}";
       }
     }
 
     # if the --export flag is set, export a seed
     if ($state->{export_seed}) {
-      my $seed = _generate_seed($data, $state);
+      my $seed = _generate_seed($debugger, $data, $state);
       print "==================================================================\n";
       print "Seed: $seed\n";
       print "==================================================================\n";
@@ -120,6 +117,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to function 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $data = shift;
     my $state = shift;
 
@@ -163,26 +161,6 @@ package Util::Exporter {
     return(base64_encode($seed));
   }
 
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
-  }
   # perl needs this
   1;
 }

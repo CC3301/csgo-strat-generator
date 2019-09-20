@@ -36,7 +36,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # parse command line options
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  my %state = Util::Parser::Parse(@ARGV);
+  my %state = Util::Parser::Parse($debugger, @ARGV);
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # other vars 
@@ -47,22 +47,22 @@ sub Main() {
   # check if help or rules are required 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($state{help}) {
-    Util::Doc::Display('help');
+    Util::Doc::Display($debugger, 'help');
     $debugger->write("[MAIN] : Early exit. Help was displayed.");
     exit();
   }
   if ($state{rules}) {
-    Util::Doc::Display('rules');
+    Util::Doc::Display($debugger, 'rules');
     $debugger->write("[MAIN] : Early exit. Rules were displayed.");
     exit();
   }
   if ($state{display_doc}) {
-    Util::Doc::Display($state{display_doc_type});
+    Util::Doc::Display($debugger, $state{display_doc_type});
     $debugger->write("[MAIN] : Early exit. Documentation was requested.");
     exit();
   }
   if ($state{doc_list}) {
-    Util::Doc::List();
+    Util::Doc::List($debugger);
     $debugger->write("[MAIN] : Early exit. Documentation was listed.");
     exit();
   }
@@ -84,19 +84,19 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my %data;
   if ($state{import_seed}) {
-    %data = Main::Import(\%state);
+    %data = Main::Import($debugger, \%state);
   } else {
-    %data = Main::Run($difficulty, %state);
+    %data = Main::Run($debugger, $difficulty, %state);
   }
 
   # check if there was anything returned
   if (! %data) {
-    _local_debug("[WRAP] : Didn't get dataset. Using import: " . $state{import_seed} ? "Yes" : "No" );
+    $debugger->write("[WRAP] : Didn't get dataset. Using import: " . $state{import_seed} ? "Yes" : "No" );
     die "Dataset generation failure";
   }
 
   if ($state{write_output}) {
-    Util::Exporter::Export(\%data, \%state);
+    Util::Exporter::Export($debugger, \%data, \%state);
   }
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

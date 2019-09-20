@@ -6,12 +6,7 @@ package Util::Import {
   use strict;
   use warnings;
 
-  use lib 'lib/';
-  use Util::Debug;
-
   use MIME::Base64;
-
-  my $DEBUG_STATE = 0;
 
   ##############################################################################
   # Import subroutine
@@ -21,6 +16,7 @@ package Util::Import {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get data passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $seed = base64_decode(shift());
     
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
