@@ -7,11 +7,6 @@ package Util::Doc {
   use warnings;
   use Cwd;
 
-  use lib 'lib/';
-  use Util::Debug;
-
-  my $DEBUG_STATE = 1;
-
   ##############################################################################
   # List subroutine
   ##############################################################################
@@ -20,6 +15,7 @@ package Util::Doc {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # what documentation files are available in the doc directory?
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $dir = getcwd() . "/data/doc/*";
     my @docfiles = glob($dir);
 
@@ -48,10 +44,11 @@ package Util::Doc {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to the function
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $doc_type = shift;
     my $file = getcwd() . "/data/doc/$doc_type";
 
-    _local_debug("[DOC]  : Readind documentation file: $file");
+    $debugger->write("[DOC]  : Readind documentation file: $file");
 
     open(DOC, $file) or die "No such documentation file. Try using --doc-list";
       
@@ -63,27 +60,6 @@ package Util::Doc {
     close DOC;
     
   }
-
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-  
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
-  } 
 
   # perl needs this
   1; 
