@@ -6,23 +6,18 @@ package Util::ReadInventory {
   use strict;
   use warnings;
   use Cwd;
-
-  use lib 'lib/';
-  use Util::Debug;
-
-  # debug state for this module
-  my $DEBUG_STATE = 0;
   
   ##############################################################################
   # Read subroutine
   ##############################################################################
-  sub Read($) {
+  sub Read {
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get item type 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $item_type = shift || die "No item type passed";
-    _local_debug("[INV]  : Preparing to read inventory file for item type: $item_type");
+    $debugger->write("[INV]  : Preparing to read inventory file for item type: $item_type");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars
@@ -43,7 +38,7 @@ package Util::ReadInventory {
     # read the file 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $item_list = "";
-    _local_debug("[INV]  : Reading inventory file: $file");
+    $debugger->write("[INV]  : Reading inventory file: $file");
     open(ITEMS, $file) or die "Failed to read $item_type inventory: $!";
 
     # read the file line by line
@@ -55,29 +50,10 @@ package Util::ReadInventory {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    _local_debug("[INV]  : Done. Loaded $line_count data lines.");
+    $debugger->write("[INV]  : Done. Loaded $line_count data lines.");
     return($item_list);
   }
   
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
-  }
+  # perl needs this
   1;
 }

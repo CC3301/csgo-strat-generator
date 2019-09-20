@@ -1,42 +1,34 @@
-package Util::Random {
- 
+package Util::Import {
+
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  # import modules
+  # import modules 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   use strict;
   use warnings;
 
+  use MIME::Base64;
+
   ##############################################################################
-  # GetRandom subroutine
+  # Import subroutine
   ##############################################################################
-  sub GetRandom {
-    
+  sub Import {
+  
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
+    # get data passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
-    my $max = shift;
-    my $min = shift || 0;
+    my $seed = base64_decode(shift());
     
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # other vars
+    # process data from seend and save in hash  
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $max_actual = $max;
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get random int 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    if ($min) {
-      $max = $max - $min;
-    }
-    my $random_int = int(rand($max) + $min);
-    $debugger->write("[RAND] : Random int: $random_int. MAX: $max_actual; MIN: $min");
+    my %seed_data;
+    
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return $random_int; 
-
+    return(%seed_data);
   }
 
   # perl needs this

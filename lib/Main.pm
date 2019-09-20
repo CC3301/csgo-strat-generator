@@ -7,13 +7,13 @@ package Main {
   use warnings;
 
   use lib 'lib/';
-  use Util::Debug;
+
+  use Util::Import;
+
 
   use Feature::Hardcore;
   use Feature::Items;
   use Feature::Strats;
-
-  my $DEBUG_STATE = 0;
 
   ##############################################################################
   # Run subroutine
@@ -23,6 +23,7 @@ package Main {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get data passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $difficulty = shift;
     my %state = @_;
 
@@ -34,66 +35,66 @@ package Main {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # run all the generation code 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    _local_debug("[MAIN] : Generating game-rule set..");
-    _local_debug("[MAIN] : Using difficulty: $difficulty..");
-    _local_debug("[MAIN] : Using os_type: $state{os_type}");
+    $debugger->write("[MAIN] : Generating game-rule set..");
+    $debugger->write("[MAIN] : Using difficulty: $difficulty..");
+    $debugger->write("[MAIN] : Using os_type: $state{os_type}");
     
     
     # generate a pistol
-    my %pistol = Feature::Items::GetItem('pistols');
-    while(_check_for_free_choice($difficulty, %pistol)) {
-      %pistol = Feature::Items::GetItem('pistols');
+    my %pistol = Feature::Items::GetItem($debugger, 'pistols');
+    while(_check_for_free_choice($debugger, $difficulty, %pistol)) {
+      %pistol = Feature::Items::GetItem($debugger, 'pistols');
     }
 
     # generate a weapon
-    my %weapon = Feature::Items::GetItem('weapons');
-    while(_check_for_free_choice($difficulty, %weapon)) {
-      %weapon = Feature::Items::GetItem('weapons');
+    my %weapon = Feature::Items::GetItem($debugger, 'weapons');
+    while(_check_for_free_choice($debugger, $difficulty, %weapon)) {
+      %weapon = Feature::Items::GetItem($debugger, 'weapons');
     }
 
     # generate a grenade set
-    my %grenade1 = Feature::Items::GetItem('grenades');
-    my %grenade2 = Feature::Items::GetItem('grenades');
-    while(_check_for_free_choice($difficulty, %grenade1)) {
-      %grenade1 = Feature::Items::GetItem('grenades');
+    my %grenade1 = Feature::Items::GetItem($debugger, 'grenades');
+    my %grenade2 = Feature::Items::GetItem($debugger, 'grenades');
+    while(_check_for_free_choice($debugger, $difficulty, %grenade1)) {
+      %grenade1 = Feature::Items::GetItem($debugger, 'grenades');
     }
-    while(_check_for_free_choice($difficulty, %grenade2) || _check_for_duplicate(\%grenade1, \%grenade2)) {
-      %grenade2 = Feature::Items::GetItem('grenades');
+    while(_check_for_free_choice($debugger, $difficulty, %grenade2) || _check_for_duplicate($debugger, \%grenade1, \%grenade2)) {
+      %grenade2 = Feature::Items::GetItem($debugger, 'grenades');
     }
 
     # generate a util set
-    my %util1 = Feature::Items::GetItem('utils');
-    my %util2 = Feature::Items::GetItem('utils');
-    while(_check_for_free_choice($difficulty, %util1)) {
-      %util1 = Feature::Items::GetItem('utils');
+    my %util1 = Feature::Items::GetItem($debugger, 'utils');
+    my %util2 = Feature::Items::GetItem($debugger, 'utils');
+    while(_check_for_free_choice($debugger, $difficulty, %util1)) {
+      %util1 = Feature::Items::GetItem($debugger, 'utils');
     }
-    while(_check_for_free_choice($difficulty, %util2) || _check_for_duplicate(\%util1, \%util2)) {
-      %util2 = Feature::Items::GetItem('utils');
+    while(_check_for_free_choice($debugger, $difficulty, %util2) || _check_for_duplicate($debugger, \%util1, \%util2)) {
+      %util2 = Feature::Items::GetItem($debugger, 'utils');
     }
     if($util1{buy} eq 'vesthelm') {
       while($util2{buy} eq 'vest') {
-        %util2 = Feature::Items::GetItem('utils');
-        if(_check_for_free_choice($difficulty, %util2) || _check_for_duplicate(\%util1, \%util2)) {
+        %util2 = Feature::Items::GetItem($debugger, 'utils');
+        if(_check_for_free_choice($debugger, $difficulty, %util2) || _check_for_duplicate($debugger, \%util1, \%util2)) {
           $util2{buy} = 'vest';
         }
       }
     }
     if($util2{buy} eq 'vesthelm') {
       while($util1{buy} eq 'vest') {
-        %util1 = Feature::Items::GetItem('utils');
-        if(_check_for_free_choice($difficulty, %util1) || _check_for_duplicate(\%util1, \%util2)) {
+        %util1 = Feature::Items::GetItem($debugger, 'utils');
+        if(_check_for_free_choice($debugger, $difficulty, %util1) || _check_for_duplicate($debugger, \%util1, \%util2)) {
           $util1{buy} = 'vest';
         }
       }
     }
 
     # generate strat
-    my %strat = Feature::Strats::GetStrat($difficulty);
+    my %strat = Feature::Strats::GetStrat($debugger, $difficulty);
 
     # generate hardcore settings
-    my @hardcore = Feature::Hardcore::GetHardcore($difficulty);
+    my @hardcore = Feature::Hardcore::GetHardcore($debugger, $difficulty);
 
-    _local_debug("[MAIN] : Completed item, strat and hardcore generation.");
+    $debugger->write("[MAIN] : Completed item, strat and hardcore generation.");
     
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # modify data by settings 
@@ -136,7 +137,7 @@ package Main {
     # process all the data we got 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    _local_debug("[MAIN] : Processing cost and buy command data..");
+    $debugger->write("[MAIN] : Processing cost and buy command data..");
 
     # split into ct and t prices
     ($pistol{cost_ct},   $pistol{cost_t})   = split '-', $pistol{cost};
@@ -179,7 +180,7 @@ package Main {
 
     my $hardcore_string = join ';', @hardcore;
 
-    _local_debug("[MAIN] : Finished process cost and buy command data.");
+    $debugger->write("[MAIN] : Finished process cost and buy command data.");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # construct return data hash
@@ -204,6 +205,38 @@ package Main {
   }
     
   ##############################################################################
+  # Import subroutine
+  ##############################################################################
+  sub Import {
+  
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get data passed to function 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $state = shift;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my %data; # reserve name for return hash
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # magic happens here 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # get the parsed and imported seed-string
+    # my %seed_data = Util::Importer::Import($state->{seed});
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return data
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if (%data) {
+      return(%data);
+    } else {
+      die("no data generated");
+    }
+  }
+
+  ##############################################################################
   # _check_for_free_choice subroutine
   ##############################################################################
   sub _check_for_free_choice {
@@ -211,6 +244,7 @@ package Main {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to the function
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $difficulty = shift;
     my %item = @_;
     
@@ -223,7 +257,7 @@ package Main {
     # check each dataset for free choice
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if ($item{buy} eq "NONE") {
-      _local_debug("[MAIN] : Found free choice, running difficulty $difficulty. Regenerating");
+      $debugger->write("[MAIN] : Found free choice, running difficulty $difficulty. Regenerating");
       return 1;
     }
 
@@ -241,6 +275,7 @@ package Main {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to the function
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $item1 = shift;
     my $item2 = shift;
   
@@ -248,7 +283,7 @@ package Main {
     # check each dataset for duplicates 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if ($item1->{buy} eq $item2->{buy}) {
-      _local_debug("[MAIN] : Found duplicate item (" . $item1->{buy} . "). Regenerating.");
+      $debugger->write("[MAIN] : Found duplicate item (" . $item1->{buy} . "). Regenerating.");
       return 1;
     }
 
@@ -257,27 +292,6 @@ package Main {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return 0;
   }
-
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-  
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
-  } 
 
   ### perl needs this
   1;

@@ -5,24 +5,19 @@ package Util::Parser {
   #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   use strict;
   use warnings;
-  
-  use lib 'lib/';
-  use Util::Debug;
-
-  my $DEBUG_STATE = 1;
 
   #############################################################################
   # Parse subroutine
   #############################################################################
   sub Parse {
 
-    _local_debug("[PARSE]: Parsing command line options..");
-
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to this function
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my @args = @_;
 
+    $debugger->write("[PARSE]: Parsing command line options..");
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -33,8 +28,8 @@ package Util::Parser {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get default values 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my %state = _set_default();
-    %state    = _get_config(\%state);
+    my %state = _set_default($debugger);
+    %state    = _get_config($debugger, \%state);
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parse the args 
@@ -42,7 +37,7 @@ package Util::Parser {
     foreach my $switch (@args) {
 
       $skip = 0;
-      _local_debug("[PARSE]: Option : $switch as $counter option");
+      $debugger->write("[PARSE]: Option : $switch as $counter option");
 
       if ($switch eq '-d' || $switch eq '--difficulty') {
         if ($args[$counter+1] !~ /^-?\d+$/) {
@@ -82,13 +77,22 @@ package Util::Parser {
         $state{write_csgo} = 1;
       } elsif ($switch eq '--doc') {
         if (length($args[$counter+1]) == 0) {
-          _local_error("--doc :: options requires string type argument");
+          _local_error("--doc :: option requires string type argument");
         }
         $state{display_doc} = 1;
         $state{display_doc_type} = $args[$counter+1];
         push @nexts, $args[$counter+1];
       } elsif ($switch eq '--doc-list') {
         $state{doc_list} = 1;
+      } elsif ($switch eq '--import') {
+        if (length($args[$counter+1]) == 0) {
+          _local_error("--import :: option requires string type argument");
+        }
+        $state{import_seed} = 1;
+        $state{seed} = $args[$counter+1];
+        push @nexts, $args[$counter+1];
+      } elsif ($switch eq '--export') {
+        $state{export_seed} = 1;
       } else {
 
         foreach(@nexts) {
@@ -112,27 +116,30 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # print all the settings when debut state is set to 2 or higher 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    _local_debug("[PARSE]: Setting: help              => $state{help}");
-    _local_debug("[PARSE]: Setting: rules             => $state{rules}");
-    _local_debug("[PARSE]: Setting: difficulty        => $state{difficulty}");
-    _local_debug("[PARSE]: Setting: default_key       => $state{default_key}");
-    _local_debug("[PARSE]: Setting: disable->pistol   => $state{disable}{pistol}");
-    _local_debug("[PARSE]: Setting: disable->weapon   => $state{disable}{weapon}");
-    _local_debug("[PARSE]: Setting: disable->grenades => $state{disable}{grenades}");
-    _local_debug("[PARSE]: Setting: disable->utils    => $state{disable}{utils}");
-    _local_debug("[PARSE]: Setting: disable->hardcore => $state{disable}{hardcore}");
-    _local_debug("[PARSE]: Setting: disable->strats   => $state{disable}{strats}");
-    _local_debug("[PARSE]: Setting: display_disabled  => $state{display_disabled}");
-    _local_debug("[PARSE]: Setting: write_output      => $state{write_output}");
-    _local_debug("[PARSE]: Setting: write_csgo        => $state{write_csgo}");
-    _local_debug("[PARSE]: Setting: display_doc       => $state{display_doc}");
-    _local_debug("[PARSE]: Setting: display_doc_type  => $state{display_doc_type}");
-    _local_debug("[PARSE]: Setting: doc_list          => $state{doc_list}");
+    $debugger->write("[PARSE]: Setting: help              => $state{help}");
+    $debugger->write("[PARSE]: Setting: rules             => $state{rules}");
+    $debugger->write("[PARSE]: Setting: difficulty        => $state{difficulty}");
+    $debugger->write("[PARSE]: Setting: default_key       => $state{default_key}");
+    $debugger->write("[PARSE]: Setting: disable->pistol   => $state{disable}{pistol}");
+    $debugger->write("[PARSE]: Setting: disable->weapon   => $state{disable}{weapon}");
+    $debugger->write("[PARSE]: Setting: disable->grenades => $state{disable}{grenades}");
+    $debugger->write("[PARSE]: Setting: disable->utils    => $state{disable}{utils}");
+    $debugger->write("[PARSE]: Setting: disable->hardcore => $state{disable}{hardcore}");
+    $debugger->write("[PARSE]: Setting: disable->strats   => $state{disable}{strats}");
+    $debugger->write("[PARSE]: Setting: display_disabled  => $state{display_disabled}");
+    $debugger->write("[PARSE]: Setting: write_output      => $state{write_output}");
+    $debugger->write("[PARSE]: Setting: write_csgo        => $state{write_csgo}");
+    $debugger->write("[PARSE]: Setting: display_doc       => $state{display_doc}");
+    $debugger->write("[PARSE]: Setting: display_doc_type  => $state{display_doc_type}");
+    $debugger->write("[PARSE]: Setting: doc_list          => $state{doc_list}");
+    $debugger->write("[PARSE]: Setting: import_seed       => $state{import_seed}");
+    $debugger->write("[PARSE]: Setting: seed              => $state{seed}");
+    $debugger->write("[PARSE]: Setting: export_seed       => $state{export_seed}");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return settings 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    _local_debug("[PARSE]: Finished parsing command line.");
+    $debugger->write("[PARSE]: Finished parsing command line.");
     return(%state);
 
   }
@@ -140,8 +147,13 @@ package Util::Parser {
   ##############################################################################
   # _set_default subroutine 
   ##############################################################################
-  sub _set_default() {
+  sub _set_default {
   
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get data passed to function 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
+
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # save the default values 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -157,6 +169,9 @@ package Util::Parser {
     $state{display_doc}       = 0;
     $state{display_doc_type}  = '';
     $state{doc_list}          = 0;
+    $state{import_seed}       = 0;
+    $state{seed}              = '';
+    $state{export_seed}       = 0;
 
     $state{disable}{pistol}   = 0;
     $state{disable}{weapon}   = 0;
@@ -168,7 +183,7 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return default values
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    _local_debug("[PARSE]: Loaded default values for the current version.");
+    $debugger->write("[PARSE]: Loaded default values for the current version.");
     return(%state);
   }
 
@@ -180,6 +195,7 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $state = shift || die "Config parse error";
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -197,8 +213,8 @@ package Util::Parser {
         next if $_ eq '' || $_ eq "\n";
         chomp $_;
 
-        my ($value, @keys) = _parse_config_line($_);
-        _local_debug("[PARSE]: Config : " . join('.', @keys) . " :: $value");
+        my ($value, @keys) = _parse_config_line($debugger, $_);
+        $debugger->write("[PARSE]: Config : " . join('.', @keys) . " :: $value");
 
         if (@keys > 1) {
           $state->{$keys[0]}->{$keys[1]}  = $value;
@@ -223,6 +239,7 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $line = shift || die "Config parse error";
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -283,27 +300,6 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     die(shift);
 
-  }
-
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
   }
 
   # perl needs this

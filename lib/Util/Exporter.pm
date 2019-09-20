@@ -6,10 +6,7 @@ package Util::Exporter {
   use strict;
   use warnings;
   
-  use lib 'lib/';
-  use Util::Debug;
-
-  my $DEBUG_STATE = 1;
+  use MIME::Base64;
 
   #############################################################################
   # Export subroutine
@@ -19,6 +16,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get data passed to the function
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $data  = shift;
     my $state = shift;
 
@@ -91,9 +89,17 @@ package Util::Exporter {
           close $fh;
         }
       } else {
-        _local_debug("[EXPRT]: This feature is not available on $state->{os_type} right now.");
+        $debugger->write("[EXPRT]: This feature is not available on $state->{os_type} right now.");
         warn "Cannot write to csgo config directory, feature not supported for $state->{os_type}";
       }
+    }
+
+    # if the --export flag is set, export a seed
+    if ($state->{export_seed}) {
+      my $seed = _generate_seed($debugger, $data, $state);
+      print "==================================================================\n";
+      print "Seed: $seed\n";
+      print "==================================================================\n";
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -102,26 +108,59 @@ package Util::Exporter {
     return();
 
   }
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
+  ##############################################################################
+  # _generate_seed subroutine
+  ##############################################################################
+  sub _generate_seed { 
+  
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to function 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
+    my $data = shift;
+    my $state = shift;
 
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # generate seed 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $seed;
+
+    # on difficulty 0, we have pistols and weapons, each need to be individually checked
+    if ($state->{difficulty} >= 0 && (! $state->{disable}->{pistols} || $state->{display_disabled})) {
+      # do stuff for difficulty 0 seed, pistol part
+      ;;
+    }
+    if ($state->{difficulty} >= 0 && (! $state->{disable}->{weapons} || $state->{display_disabled})) {
+      # do stuff for difficulty 0 seed, weapon part
+      ;;
+    }
+    
+    # on difficulty 1, we have grenades
+    if ($state->{difficulty} >= 1 && (! $state->{disabled}->{grenades} || $state->{display_disabled})) {
+      # do stuff for difficulty 1 seed
+      ;;
     }
 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
+    # on difficulty 2, we have utilities
+    if ($state->{difficulty} >= 2 && (! $state->{disabled}->{utils} || $state->{display_disabled})) {
+      # do stuff for difficulty 2 seed
+      ;;
+    }
+
+    # on difficulty 3, the only difference is if we have a strat or not. 
+    if ($state->{difficulty} >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
+      # do stuff for difficulty 3 seed
+      ;;
+    }
+    
+    
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return seed 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return(base64_encode($seed));
   }
+
   # perl needs this
   1;
 }
