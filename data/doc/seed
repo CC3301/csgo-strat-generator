@@ -1,0 +1,41 @@
+Presenting the seed-system:
+
+  Seeds are strings of data, exported by the program when the '--export' flag is set. Seeds
+  can be shared accross computers and platforms, meaning no more hassle for you to copy
+  the buy string to your friends, while you can just use the '--write-csgo' feature. No more
+  sharing of screenshots for strats is required. The exported seed can be imported to another
+  instance of this program and will produce the same output as in the instance it was exported
+  from. 
+
+  Some technical information about seeds:
+
+    Seeds are base64 encoded strings of data in a certain format. The seed can be imported/exported
+    stored and imported at any time. (Due to future technical changes, seeds might only work in 
+    supported versions, since the feature will change over time.) The data format in which the seed is
+    before encoding and after decoding, is defined as follows:
+
+    p:p2000,w:ak47,
+
+    This is a simple key value format and should be really easy to use and understand.
+
+
+  How to use seeds:
+
+    Export:
+      Run the csgo-strat-generator with the flag '--export' to generate a seed form the generated
+      game-rule set.
+
+    Import: 
+      Run the csgo-strat-generator with the flag '--import <seed>' to generate a game-rule set
+      according to what the output was.
+
+
+
+  Known/Expected issues:
+
+    There is a chance that the config between the users differ. Which might result in items/settings
+    not being displayed even though they were originally generated.
+
+    When there is a p2000/USP-S/Glock as pistol setting, there is a chance that the outputs differ,
+    because the buy-slug for each of those is "NULL" since there is no point in buying a glock/USP-S/
+    P2000. This might result in different ouput than originally generated.
