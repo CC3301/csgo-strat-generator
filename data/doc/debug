@@ -1,0 +1,2 @@
+The debug mode is enabled by setting the command line option: '--debug'
+This has to be the first option you pass.

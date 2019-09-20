@@ -5,12 +5,6 @@ package Util::Random {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   use strict;
   use warnings;
-  
-  use lib '/lib';
-  use Util::Debug;
-
-  # debug output state for this module
-  my $DEBUG_STATE = 0;
 
   ##############################################################################
   # GetRandom subroutine
@@ -20,6 +14,7 @@ package Util::Random {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to the function
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $max = shift;
     my $min = shift || 0;
     
@@ -35,35 +30,13 @@ package Util::Random {
       $max = $max - $min;
     }
     my $random_int = int(rand($max) + $min);
-    if ($DEBUG_STATE) {
-      _local_debug("[RAND] : Random int: $random_int. MAX: $max_actual; MIN: $min");
-    }
+    $debugger->write("[RAND] : Random int: $random_int. MAX: $max_actual; MIN: $min");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return $random_int; 
 
-  }
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
   }
 
   # perl needs this
