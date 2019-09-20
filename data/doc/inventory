@@ -1,0 +1,47 @@
+General structure of inventory files
+
+  Inventory files are read line by line by the inventory file reader. The data gets then passed
+  to certain prasers, which process the data for each different inventory type. For example,
+  the pistol, weapon, util and grenade inventory files are each parsed the same. Here's an 
+  example on how these files are structured:
+
+  Item Name    :          buy_type      ,         ct_price         -         t_price
+      ^        ^             ^          ^            ^             ^           ^
+      |        |             |          |            |             |           |
+   Name of   seperated    this tells  seperated   The price      seperated  The price 
+   the item  by a colon   csgo what   by a comma  of this item   by a dash  of this item
+                          to buy                  on CT side                on T side
+
+  So a complete, valid line in one of the forementioned files would look like this:
+
+    Item Name:item,1000-1200
+
+
+
+
+  Now when it comes to parsing the strat inventory files, there are some differences to the item
+  inventory parsing. 
+
+  Strat Name   :        strat description         ;            strat description.2   ,         strat_score
+       ^       ^             ^                    ^                 ^                ^            ^
+       |       |             |                    |                 |                |            |
+  Name of    seperated   Explains the strat  Create a newline  this will be in a   seperated   score of the 
+  the Strat  by a colon  in more detail      in the output     new line            by a comma  strat
+
+  So a complete, valid line the strat inventory file would look either like this:
+
+    Strat Name:strat_description,strat_score
+
+  or like this:
+
+    Strat Name:strat_description;strat_description_line_2,strat_score
+
+
+
+
+  The hardcore inventory is currently disabled. You can force the usage with --force-hardcore. However,
+  there is no documentation and the feature is there, but doesnt really work together with other parts
+  of the program.
+
+  
+  When these requirements are not met, the program will throw a 'malformed inventory file' error.

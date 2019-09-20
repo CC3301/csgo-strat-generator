@@ -9,7 +9,7 @@ package Util::Exporter {
   use lib 'lib/';
   use Util::Debug;
 
-  my $DEBUG_STATE = 0;
+  my $DEBUG_STATE = 1;
 
   #############################################################################
   # Export subroutine
@@ -30,7 +30,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # write output 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    open(my $fh, '>', 'data/export.txt');
+    open(my $fh, '>', 'export.txt');
     
       print $fh "csgo-strat-generator exported output\n";
       print $fh "===========================================================\n";

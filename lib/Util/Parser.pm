@@ -9,7 +9,7 @@ package Util::Parser {
   use lib 'lib/';
   use Util::Debug;
 
-  my $DEBUG_STATE = 0;
+  my $DEBUG_STATE = 1;
 
   #############################################################################
   # Parse subroutine
@@ -34,6 +34,7 @@ package Util::Parser {
     # get default values 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %state = _set_default();
+    %state    = _get_config(\%state);
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parse the args 
@@ -41,7 +42,7 @@ package Util::Parser {
     foreach my $switch (@args) {
 
       $skip = 0;
-      _local_debug("[PARSE]: Handling option: $switch as $counter option");
+      _local_debug("[PARSE]: Option : $switch as $counter option");
 
       if ($switch eq '-d' || $switch eq '--difficulty') {
         if ($args[$counter+1] !~ /^-?\d+$/) {
@@ -72,7 +73,6 @@ package Util::Parser {
           _local_error("--default-key | -k :: option requires single character argument");
         }
         $state{default_key} = $args[$counter+1];
-        print "TEST: $args[$counter+1]\n";
         push @nexts, $args[$counter+1];
       } elsif ($switch eq '--display-disabled') {
         $state{display_disabled} = 1;
@@ -80,6 +80,15 @@ package Util::Parser {
         $state{write_output} = 1;
       } elsif ($switch eq '--write-csgo') {
         $state{write_csgo} = 1;
+      } elsif ($switch eq '--doc') {
+        if (length($args[$counter+1]) == 0) {
+          _local_error("--doc :: options requires string type argument");
+        }
+        $state{display_doc} = 1;
+        $state{display_doc_type} = $args[$counter+1];
+        push @nexts, $args[$counter+1];
+      } elsif ($switch eq '--doc-list') {
+        $state{doc_list} = 1;
       } else {
 
         foreach(@nexts) {
@@ -116,6 +125,9 @@ package Util::Parser {
     _local_debug("[PARSE]: Setting: display_disabled  => $state{display_disabled}");
     _local_debug("[PARSE]: Setting: write_output      => $state{write_output}");
     _local_debug("[PARSE]: Setting: write_csgo        => $state{write_csgo}");
+    _local_debug("[PARSE]: Setting: display_doc       => $state{display_doc}");
+    _local_debug("[PARSE]: Setting: display_doc_type  => $state{display_doc_type}");
+    _local_debug("[PARSE]: Setting: doc_list          => $state{doc_list}");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return settings 
@@ -135,14 +147,17 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %state;
 
-    $state{help}             = 0;
-    $state{rules}            = 0;
-    $state{difficulty}       = 0;
-    $state{default_key}      = 'c';
-    $state{display_disabled} = 0; 
-    $state{write_output}     = 0;
-    $state{write_csgo}       = 0;
-    
+    $state{help}              = 0;
+    $state{rules}             = 0;
+    $state{difficulty}        = 0;
+    $state{default_key}       = '<key>';
+    $state{display_disabled}  = 0; 
+    $state{write_output}      = 0;
+    $state{write_csgo}        = 0;
+    $state{display_doc}       = 0;
+    $state{display_doc_type}  = '';
+    $state{doc_list}          = 0;
+
     $state{disable}{pistol}   = 0;
     $state{disable}{weapon}   = 0;
     $state{disable}{grenades} = 0;
@@ -155,6 +170,107 @@ package Util::Parser {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     _local_debug("[PARSE]: Loaded default values for the current version.");
     return(%state);
+  }
+
+  ##############################################################################
+  # _get_config subroutine
+  ##############################################################################
+  sub _get_config {
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to function 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $state = shift || die "Config parse error";
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $file = 'data/config';
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Open config file for reading 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    open(CFG, $file) or warn "config file not found";
+      foreach(<CFG>) {
+
+        # skip newlines and empty lines
+        next if $_ eq '' || $_ eq "\n";
+        chomp $_;
+
+        my ($value, @keys) = _parse_config_line($_);
+        _local_debug("[PARSE]: Config : " . join('.', @keys) . " :: $value");
+
+        if (@keys > 1) {
+          $state->{$keys[0]}->{$keys[1]}  = $value;
+        } else {
+          $state->{$keys[0]} = $value;
+        }
+      }
+
+    close CFG;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return values loaded from config 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return(%$state)
+  }
+
+  ##############################################################################
+  # _parse_config_line subroutine 
+  ##############################################################################
+  sub _parse_config_line {
+  
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to function 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $line = shift || die "Config parse error";
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my @allowed_keys = (
+      "difficulty",
+      "default_key",
+      "disable.pistol",
+      "disable.weapon",
+      "disable.grenades",
+      "disable.utils",
+      "disable.hardcore",
+      "disable.strats",
+      "write_output",
+      "write_csgo",
+    );
+    my $key_valid = 0;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # parse the config line 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # get the current key
+    my $key_str = substr($line, 0, index($line, ':'));
+
+    # check if the key is allowed
+    foreach(@allowed_keys) {
+      if ($_ eq $key_str) {
+        $key_valid = 1;
+      }
+    }
+      
+    # die when the key is not allowed
+    _local_error("Illegal config key") unless $key_valid;
+
+    # parse the rest of the current line
+    my $value   = substr($line, index($line, $key_str) + length($key_str) + 1);
+    my @keys    = split '.', $key_str;
+
+    unless(@keys) {
+      $keys[0] = $key_str;
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return values loaded from config 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return($value, @keys);
   }
 
   ##############################################################################

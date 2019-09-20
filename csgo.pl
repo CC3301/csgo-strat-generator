@@ -5,8 +5,8 @@ use warnings;
 use lib 'lib/';
 use Util::Debug;
 use Util::Parser;
-use Util::Help;
 use Util::Exporter;
+use Util::Doc;
 use Main;
 
 # debug for this main part of csgo-strat gen on or off
@@ -34,16 +34,26 @@ sub Main() {
   # check if help or rules are required 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($state{help}) {
-    Util::Help::ShowMsg('help');
+    Util::Doc::Display('help');
     _local_debug("[MAIN] : Early exit. Help was displayed.");
     exit();
   }
   if ($state{rules}) {
-    Util::Help::ShowMsg('rules');
+    Util::Doc::Display('rules');
     _local_debug("[MAIN] : Early exit. Rules were displayed.");
     exit();
   }
-  
+  if ($state{display_doc}) {
+    Util::Doc::Display($state{display_doc_type});
+    _local_debug("[MAIN] : Early exit. Documentation was requested.");
+    exit();
+  }
+  if ($state{doc_list}) {
+    Util::Doc::List();
+    _local_debug("[MAIN] : Early exit. Documentation was listed.");
+    exit();
+  }
+
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get os type
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -111,7 +121,7 @@ sub Main() {
 
   # print the rest of the stats
   print "===================================================================\n";
-  print "\nDifficulty : $difficulty\n";
+  print "\nDifficulty   : $difficulty\n";
 
   if ($data{total_cost_ct} == $data{total_cost_t}) {
     print "Total Cost   : $data{total_cost_ct}\$\n\n";
