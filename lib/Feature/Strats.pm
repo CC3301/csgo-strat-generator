@@ -9,7 +9,6 @@ package Feature::Strats {
   use lib 'lib/';
   use Util::ReadInventory;
   use Util::Random;
-  use Util::Debug;
 
   # debug state for this module
   my $DEBUG_STATE = 0;
@@ -17,13 +16,14 @@ package Feature::Strats {
   ##############################################################################
   # GetStrat subroutine
   ##############################################################################
-  sub GetStrat($) {
+  sub GetStrat {
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # what strat score are we aiming for 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $target_score = shift;
-    _local_debug("[STRAT]: Targetting strat score: $target_score");
+    $debugger->write("[STRAT]: Targetting strat score: $target_score");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
@@ -35,7 +35,7 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of strats available and store them in a hash 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $strat_list = Util::ReadInventory::Read('strats');
+    my $strat_list = Util::ReadInventory::Read($debugger, 'strats');
     my @strats = split "\n", $strat_list;
 
     # go through all strats and get their stats
@@ -59,7 +59,7 @@ package Feature::Strats {
         print "\tI suspect the error to be near to:\n";
         print "\t\t$strats[$counter]\n";
         print "\tin /data/strats.inv at line $h_counter\n";
-        _local_debug("[STRAT]: Can't continue on malformed data line");
+        $debugger->write("[STRAT]: Can't continue on malformed data line");
         die();
       }
 
@@ -72,12 +72,12 @@ package Feature::Strats {
       $counter++;
     }
 
-    _local_debug("[STRAT]: Finished processing strategy inventory");
+    $debugger->write("[STRAT]: Finished processing strategy inventory");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # tell the score calculation system what kind of score we are aiming for
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $strat_index = _eval_strat_score($counter, $target_score, %strats);
+    my $strat_index = _eval_strat_score($debugger, $counter, $target_score, %strats);
 
     # check if we even found a strat and if yes, then return the details about
     # this strat
@@ -85,12 +85,12 @@ package Feature::Strats {
       $return{name}  = "Anonymus";
       $return{desc}  = "I am sorry, but i didnt find any strat for you";
       $return{score} = 0;
-      _local_debug("[STRAT]: Could not find matching strategy with score");
+      $debugger->write("[STRAT]: Could not find matching strategy with score");
     } else {
       $return{name}  = $strats{$strat_index}{name};
       $return{desc}  = $strats{$strat_index}{desc};
       $return{score} = $strats{$strat_index}{score};
-      _local_debug("[STRAT]: Found matching strategy with score: " . $return{score});
+      $debugger->write("[STRAT]: Found matching strategy with score: " . $return{score});
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -108,6 +108,7 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get passed values
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $target_counter = shift;
     my $target_score   = shift;
     my %strats         = @_;
@@ -132,17 +133,17 @@ package Feature::Strats {
       # increment the counter
       $counter++;
     }
-    _local_debug("[STRAT]: Total strats loaded: $counter");
+    $debugger->write("[STRAT]: Total strats loaded: $counter");
 
     # randomize the contents of @scores
-    _local_debug("[STRAT]: Randomizing scores array");
-    @scores = _shuffle(\@scores);
+    $debugger->write("[STRAT]: Randomizing scores array");
+    @scores = _shuffle($debugger, \@scores);
 
     # get a random score
-    my $random_score = _get_random_score($target_score, @scores);
+    my $random_score = _get_random_score($debugger, $target_score, @scores);
     while($random_score > @scores) {
-      _local_debug("[STRAT]: Random score too high. Regenerating.");
-      $random_score = _get_random_score($target_score, @scores);
+      $debugger->write("[STRAT]: Random score too high. Regenerating.");
+      $random_score = _get_random_score($debugger, $target_score, @scores);
     }
 
     # check if there was an error and some data was lost, or magically created
@@ -190,6 +191,7 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $target_score = shift;
     my @scores = @_;
     
@@ -213,26 +215,26 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # prevent the target score from getting out of scope
     if ($target_score > @scores) {
-      _local_debug("[STRAT]: Targetted score ($target_score) is higher than available scores. Equalizing.");
+      $debugger->write("[STRAT]: Targetted score ($target_score) is higher than available scores. Equalizing.");
       $target_score = $max_avail_score;
-      _local_debug("[STRAT]: Target score is now set to $target_score");
+      $debugger->write("[STRAT]: Target score is now set to $target_score");
     }
 
     # set a minimal score, we dont want lame strats at high difficulty
     if ($target_score > 5) {
-      _local_debug("[STRAT]: Detected a difficulty higher than 5. Generating minimum score.");
+      $debugger->write("[STRAT]: Detected a difficulty higher than 5. Generating minimum score.");
       $score_min = int($target_score - ($target_score / 2));
     }
 
     # prevent an infinite loop
     if ($score_min > @scores) {
-      _local_debug("[STRAT]: The difficulty: $target_score is too high for generating" .
+      $debugger->write("[STRAT]: The difficulty: $target_score is too high for generating" .
         " a strategy");
       die "difficulty out of scope";
     }
 
     # get the random score
-    my $random_score = Util::Random::GetRandom($target_score, $score_min);
+    my $random_score = Util::Random::GetRandom($debugger, $target_score, $score_min);
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
@@ -248,6 +250,7 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to the function
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $deck = shift;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -257,7 +260,7 @@ package Feature::Strats {
 
     # randomize the array
     while($i--) {
-      my $j = Util::Random::GetRandom($i+1);
+      my $j = Util::Random::GetRandom($debugger, $i+1);
       @$deck[$i,$j] = @$deck[$j,$i];
     }
 
@@ -266,25 +269,7 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return(@$deck);
   }
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
-  }
+  # perl needs this
   1;
 }

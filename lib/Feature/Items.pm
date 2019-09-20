@@ -9,21 +9,18 @@ package Feature::Items {
   use lib 'lib/';
   use Util::Random;
   use Util::ReadInventory;
-  use Util::Debug;
-
-  # debug state for this module
-  my $DEBUG_STATE = 0;
 
   #############################################################################
   # GetWeapon subroutine
   #############################################################################
-  sub GetItem($) {
+  sub GetItem {
     
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get item_type 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $item_type = shift || die "No item type passed";
-    _local_debug("[ITEMS]: Generating dataset for $item_type");
+    $debugger->write("[ITEMS]: Generating dataset for $item_type");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
@@ -34,7 +31,7 @@ package Feature::Items {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of weapons available and store them in a hash table
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $item_list = Util::ReadInventory::Read($item_type); 
+    my $item_list = Util::ReadInventory::Read($debugger, $item_type); 
     my @items = split "\n", $item_list;
     
     # go through all weapons and get their stats
@@ -58,7 +55,7 @@ package Feature::Items {
         print "\tI suspect the error to be near to:\n";
         print "\t\t$items[$counter]\n";
         print "\tin /data/$item_type.inv at line $h_counter\n";
-        _local_debug("[ITEMS]: Can't continue on malformed data line");
+        $debugger->write("[ITEMS]: Can't continue on malformed data line");
         die();
       }
 
@@ -71,12 +68,12 @@ package Feature::Items {
       $counter++;
     }
 
-    _local_debug("[ITEMS]: Finished processing $item_type inventory file");
+    $debugger->write("[ITEMS]: Finished processing $item_type inventory file");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get a random number with the max being the index counter
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $random_int = Util::Random::GetRandom($counter);
+    my $random_int = Util::Random::GetRandom($debugger, $counter);
 
     # return whatever is stored in the items hash at the random index
     my %return;
@@ -87,25 +84,7 @@ package Feature::Items {
     return(%return);
 
   }
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
-  }
+  # perl needs this
   1;
 }
