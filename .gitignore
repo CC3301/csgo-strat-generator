@@ -1,3 +1,4 @@
 log/*.log
 data/config
 export.txt
+mcd.bat
