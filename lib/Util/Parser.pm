@@ -82,22 +82,13 @@ package Util::Parser {
         $state{write_csgo} = 1;
       } elsif ($switch eq '--doc') {
         if (length($args[$counter+1]) == 0) {
-          _local_error("--doc :: option requires string type argument");
+          _local_error("--doc :: options requires string type argument");
         }
         $state{display_doc} = 1;
         $state{display_doc_type} = $args[$counter+1];
         push @nexts, $args[$counter+1];
       } elsif ($switch eq '--doc-list') {
         $state{doc_list} = 1;
-      } elsif ($switch eq '--import') {
-        if (length($args[$counter+1]) == 0) {
-          _local_error("--import :: option requires string type argument");
-        }
-        $state{import_seed} = 1;
-        $state{seed} = $args[$counter+1];
-        push @nexts, $args[$counter+1];
-      } elsif ($switch eq '--export') {
-        $state{export_seed} = 1;
       } else {
 
         foreach(@nexts) {
@@ -137,9 +128,6 @@ package Util::Parser {
     _local_debug("[PARSE]: Setting: display_doc       => $state{display_doc}");
     _local_debug("[PARSE]: Setting: display_doc_type  => $state{display_doc_type}");
     _local_debug("[PARSE]: Setting: doc_list          => $state{doc_list}");
-    _local_debug("[PARSE]: Setting: import_seed       => $state{import_seed}");
-    _local_debug("[PARSE]: Setting: seed              => $state{seed}");
-    _local_debug("[PARSE]: Setting: export_seed       => $state{export_seed}");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return settings 
@@ -169,9 +157,6 @@ package Util::Parser {
     $state{display_doc}       = 0;
     $state{display_doc_type}  = '';
     $state{doc_list}          = 0;
-    $state{import_seed}       = 0;
-    $state{seed}              = '';
-    $state{export_seed}       = 0;
 
     $state{disable}{pistol}   = 0;
     $state{disable}{weapon}   = 0;

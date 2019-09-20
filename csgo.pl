@@ -82,18 +82,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get dataset 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  my %data;
-  if ($state{import_seed}) {
-    %data = Main::Import(\%state);
-  } else {
-    %data = Main::Run($difficulty, %state);
-  }
-
-  # check if there was anything returned
-  if (! %data) {
-    _local_debug("[WRAP] : Didn't get dataset. Using import: " . $state{import_seed} ? "Yes" : "No" );
-    die "Dataset generation failure";
-  }
+  my %data = Main::Run($debugger, $difficulty, %state);
 
   if ($state{write_output}) {
     Util::Exporter::Export(\%data, \%state);
