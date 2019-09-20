@@ -10,7 +10,6 @@ use Util::Doc;
 use Main;
 
 # debug for this main part of csgo-strat gen on or off
-my $DEBUG_STATE = 0;
 my $VERSION = 'v1.0';
 
 ################################################################################
@@ -18,7 +17,21 @@ my $VERSION = 'v1.0';
 ################################################################################
 sub Main() {
 
-  _local_debug("[WRAP] : Kicking off csgo-strat-generator $VERSION");
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # handle debugging 
+  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  my $debug_state = 0;
+  if ($ARGV[0] eq '--debug') {
+    shift(@ARGV);
+    $debug_state = 1;
+  }
+  my $debugger = Util::Debug->new(
+    enable => $debug_state,
+    logfile => 'log/latest.log',
+  );
+
+  # send debug message about the program start
+  $debugger->write("[WRAP] : Kicking off csgo-strat-generator $VERSION");
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # parse command line options
@@ -35,22 +48,22 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   if ($state{help}) {
     Util::Doc::Display('help');
-    _local_debug("[MAIN] : Early exit. Help was displayed.");
+    $debugger->write("[MAIN] : Early exit. Help was displayed.");
     exit();
   }
   if ($state{rules}) {
     Util::Doc::Display('rules');
-    _local_debug("[MAIN] : Early exit. Rules were displayed.");
+    $debugger->write("[MAIN] : Early exit. Rules were displayed.");
     exit();
   }
   if ($state{display_doc}) {
     Util::Doc::Display($state{display_doc_type});
-    _local_debug("[MAIN] : Early exit. Documentation was requested.");
+    $debugger->write("[MAIN] : Early exit. Documentation was requested.");
     exit();
   }
   if ($state{doc_list}) {
     Util::Doc::List();
-    _local_debug("[MAIN] : Early exit. Documentation was listed.");
+    $debugger->write("[MAIN] : Early exit. Documentation was listed.");
     exit();
   }
 
@@ -69,7 +82,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # get dataset 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  my %data = Main::Run($difficulty, %state);
+  my %data = Main::Run($debugger, $difficulty, %state);
 
   if ($state{write_output}) {
     Util::Exporter::Export(\%data, \%state);
@@ -78,7 +91,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # print output 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  _local_debug("[WRAP] : Priting output");
+  $debugger->write("[WRAP] : Priting output");
   print "CSGO strat-generator $VERSION output:\n\n";
   print "===================================================================\n";
   
@@ -134,32 +147,11 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  _local_debug("[WRAP] : csgo strat gen complete.");
+  $debugger->write("[WRAP] : csgo strat gen complete.");
   return(0);
   
 }
 
-################################################################################
-# _local_debug subroutine
-################################################################################
-sub _local_debug {
-
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  # get vars passed to the function
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  my $msg = shift;
-
-  # only produce debug output if it is enabled for this module
-  if ($DEBUG_STATE) {
-    Util::Debug::Debug($msg);
-  }
-
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  # return
-  #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  return;
-
-}
 
 ################################################################################
 # Main subroutine call 

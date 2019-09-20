@@ -9,19 +9,16 @@ package Feature::Hardcore {
   use lib 'lib/';
   use Util::Random;
   use Util::ReadInventory;
-  use Util::Debug;
-
-  # debug state for this module
-  my $DEBUG_STATE = 0;
 
   ##############################################################################
   # GetHardcore subroutine
   ##############################################################################
-  sub GetHardcore($) {
+  sub GetHardcore {
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get difficulty
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+    my $debugger = shift;
     my $difficulty = shift;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -40,7 +37,7 @@ package Feature::Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of hardcore settings available
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $settings_list = Util::ReadInventory::Read('hardcore'); 
+    my $settings_list = Util::ReadInventory::Read($debugger, 'hardcore'); 
     my @settings = split "\n", $settings_list;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -51,28 +48,28 @@ package Feature::Hardcore {
     if ($difficulty > 20) {
       $hardcore_count = 4;
       shift @return;
-      _local_debug("[HARD] : Running difficulty greater than 20. Generating $hardcore_count hardcore setting(s).");
+      $debugger->write("[HARD] : Running difficulty greater than 20. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty > 15 ) {
       $hardcore_count = 3;
       shift @return;
-      _local_debug("[HARD] : Running difficulty greater than 15. Generating $hardcore_count hardcore setting(s).");
+      $debugger->write("[HARD] : Running difficulty greater than 15. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty > 10 ) {
       $hardcore_count = 2;
       shift @return;
-      _local_debug("[HARD] : Running difficulty greater than 10. Generating $hardcore_count hardcore setting(s).");
+      $debugger->write("[HARD] : Running difficulty greater than 10. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty > 5 ) {
       $hardcore_count = 1;
       shift @return;
-      _local_debug("[HARD] : Running difficulty greater than 5. Generating $hardcore_count hardcore setting(s).");
+      $debugger->write("[HARD] : Running difficulty greater than 5. Generating $hardcore_count hardcore setting(s).");
     } elsif ($difficulty <= 5 ) {
-      _local_debug("[HARD] : Difficulty 5 or lower. Not generating any hardcore setting(s).");
+      $debugger->write("[HARD] : Difficulty 5 or lower. Not generating any hardcore setting(s).");
       return(@return);
     }
 
     # at this point, we know the amout of hardcore settings we want 
     # so we can check if we even have enough
     if ($hardcore_count > @settings) {
-      _local_debug("[HARD] : Failed to generate hardcore settings");
+      $debugger->write("[HARD] : Failed to generate hardcore settings");
       die "difficulty out of scope";
     }
 
@@ -80,31 +77,31 @@ package Feature::Hardcore {
     until ($counter == $hardcore_count) {
 
       # generate hardcore setting
-      my $current_setting = _generate_hard_core_setting(@settings);
+      my $current_setting = _generate_hard_core_setting($debugger, @settings);
       
       # make sure we dont duplicate
       foreach(@return) {
         while (substr($_, 0, 10) eq substr($current_setting, 0, 10)) {
-          _local_debug("[HARD] : Found duplicate hardcore setting($current_setting). Regenerating.");
-          $current_setting = _generate_hard_core_setting(@settings);
+          $debugger->write("[HARD] : Found duplicate hardcore setting($current_setting). Regenerating.");
+          $current_setting = _generate_hard_core_setting($debugger, @settings);
         }
       }
       
       # filter for some specific settings
       if ($current_setting eq "random_sens" && ! $state_random_sens) {
-        my $random_sens = (Util::Random::GetRandom($difficulty / 3) / 1.50) / 2 * 2;
+        my $random_sens = (Util::Random::GetRandom($debugger, $difficulty / 3) / 1.50) / 2 * 2;
         $current_setting = "Random mouse sensivity: $random_sens";
         $state_random_sens = 1;
-        _local_debug("[HARD] : Found random sens setting. Generated random mouse sensivity: $random_sens");
+        $debugger->write("[HARD] : Found random sens setting. Generated random mouse sensivity: $random_sens");
       }
       if ($current_setting eq 'random_fps' && ! $state_random_fps) {
-        my $random_fps = _generate_random_fps($difficulty);
+        my $random_fps = _generate_random_fps($debugger, $difficulty);
         while ($random_fps < 60) {
-          $random_fps = _generate_random_fps($difficulty);
+          $random_fps = _generate_random_fps($debugger, $difficulty);
         }
         $current_setting = "Random max_fps setting: $random_fps";
         $state_random_fps = 1;
-        _local_debug("[HARD] : Found random fps setting. Generated random fps: $random_fps");
+        $debugger->write("[HARD] : Found random fps setting. Generated random fps: $random_fps");
       }
 
       # push the current setting to the return array
@@ -129,6 +126,7 @@ package Feature::Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get data passed to function
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my @settings = @_;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -139,11 +137,11 @@ package Feature::Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get random int with the max being the size of the settings array
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    my $random_int = Util::Random::GetRandom($settings_count);
+    my $random_int = Util::Random::GetRandom($debugger, $settings_count);
 
     # double check to make sure that we really dont exceed the settings array size
     while($random_int == @settings) {
-      $random_int = Util::Random::GetRandom($settings_count);
+      $random_int = Util::Random::GetRandom($debugger, $settings_count);
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -160,6 +158,7 @@ package Feature::Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get data passed to function
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
     my $difficulty = shift;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -177,8 +176,8 @@ package Feature::Hardcore {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get random int with some magic
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    my $random_fps = Util::Random::GetRandom($base_int / $difficulty);
-    _local_debug("[HARD] : Generated $random_fps for fps_max setting");
+    my $random_fps = Util::Random::GetRandom($debugger, $base_int / $difficulty);
+    $debugger->write("[HARD] : Generated $random_fps for fps_max setting");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
@@ -186,25 +185,6 @@ package Feature::Hardcore {
     return($random_fps);   
   }
 
-  ##############################################################################
-  # _local_debug subroutine
-  ##############################################################################
-  sub _local_debug {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $msg = shift;
-
-    # only produce debug output if it is enabled for this module
-    if ($DEBUG_STATE) {
-      Util::Debug::Debug($msg);
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return;
-  }
+  # perl needs this
   1;
 }
