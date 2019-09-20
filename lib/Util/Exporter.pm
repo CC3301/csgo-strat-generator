@@ -8,6 +8,7 @@ package Util::Exporter {
   
   use lib 'lib/';
   use Util::Debug;
+  use MIME::Base64;
 
   my $DEBUG_STATE = 1;
 
@@ -96,12 +97,72 @@ package Util::Exporter {
       }
     }
 
+    # if the --export flag is set, export a seed
+    if ($state->{export_seed}) {
+      my $seed = _generate_seed($data, $state);
+      print "==================================================================\n";
+      print "Seed: $seed\n";
+      print "==================================================================\n";
+    }
+
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return();
 
   }
+
+  ##############################################################################
+  # _generate_seed subroutine
+  ##############################################################################
+  sub _generate_seed { 
+  
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to function 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $data = shift;
+    my $state = shift;
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # generate seed 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $seed;
+
+    # on difficulty 0, we have pistols and weapons, each need to be individually checked
+    if ($state->{difficulty} >= 0 && (! $state->{disable}->{pistols} || $state->{display_disabled})) {
+      # do stuff for difficulty 0 seed, pistol part
+      ;;
+    }
+    if ($state->{difficulty} >= 0 && (! $state->{disable}->{weapons} || $state->{display_disabled})) {
+      # do stuff for difficulty 0 seed, weapon part
+      ;;
+    }
+    
+    # on difficulty 1, we have grenades
+    if ($state->{difficulty} >= 1 && (! $state->{disabled}->{grenades} || $state->{display_disabled})) {
+      # do stuff for difficulty 1 seed
+      ;;
+    }
+
+    # on difficulty 2, we have utilities
+    if ($state->{difficulty} >= 2 && (! $state->{disabled}->{utils} || $state->{display_disabled})) {
+      # do stuff for difficulty 2 seed
+      ;;
+    }
+
+    # on difficulty 3, the only difference is if we have a strat or not. 
+    if ($state->{difficulty} >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
+      # do stuff for difficulty 3 seed
+      ;;
+    }
+    
+    
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return seed 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return(base64_encode($seed));
+  }
+
   ##############################################################################
   # _local_debug subroutine
   ##############################################################################

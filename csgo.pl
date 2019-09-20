@@ -89,8 +89,9 @@ sub Main() {
     %data = Main::Run($difficulty, %state);
   }
 
+  # check if there was anything returned
   if (! %data) {
-    _local_debug("[WRAP] : Didn't get dataset. Using import:" . $state{import_seed} ? "Yes" : "No");
+    _local_debug("[WRAP] : Didn't get dataset. Using import: " . $state{import_seed} ? "Yes" : "No" );
     die "Dataset generation failure";
   }
 
