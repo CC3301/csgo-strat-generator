@@ -23,7 +23,7 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
     my $target_score = shift;
-    my $target_name = shift;
+    my $target_id = shift;
     my $state = shift;
 
     $debugger->write("[STRAT]: Targetting strat score: $target_score");
@@ -51,7 +51,7 @@ package Feature::Strats {
     # this strat
     if ($state->{import_seed}) {
 
-      if ($target_name eq 'Anonymus') {
+      if ($target_id eq '404') {
         $strat_index = 'error';
         $found = 1;
         $do_until = 0;
@@ -59,7 +59,7 @@ package Feature::Strats {
       
       if ($do_until) {
         until($local_counter == $counter) {
-          if ($strats{$local_counter}{name} eq $target_name) {
+          if ($strats{$local_counter}{id} eq $target_id) {
             $found = 1;
             $strat_index = $local_counter;
             last;
@@ -73,11 +73,13 @@ package Feature::Strats {
       $return{name}  = "Anonymus";
       $return{desc}  = "I am sorry, but i didnt find any strat for you";
       $return{score} = 0;
+      $return{id}    = '404';
       $debugger->write("[STRAT]: Could not find matching strategy with score"); 
     } else {
       $return{name}  = $strats{$strat_index}{name};
       $return{desc}  = $strats{$strat_index}{desc};
       $return{score} = $strats{$strat_index}{score};
+      $return{id}    = $strats{$strat_index}{id};
       $debugger->write("[STRAT]: Found matching strategy with score: " . $return{score});
     }
 
@@ -123,9 +125,10 @@ package Feature::Strats {
       my @strat_info  = split ',', substr($strat, index($strat, $strat_name) + length($strat_name) + 1);
       my $strat_desc  = $strat_info[0];
       my $strat_score = $strat_info[1];
+      my $strat_id    = $strat_info[2];
 
       # check if the line is valid
-      unless (@strat_info == 2) {
+      unless (@strat_info == 3) {
         my $h_counter = $counter+1;
         print "Malformed inventory file\n";
         print "\tI suspect the error to be near to:\n";
@@ -139,7 +142,8 @@ package Feature::Strats {
       $strats{$counter}{name}  = $strat_name;
       $strats{$counter}{desc}  = $strat_desc;
       $strats{$counter}{score} = $strat_info[1];
-    
+      $strats{$counter}{id}    = $strat_id;
+
       # increment the index counter
       $counter++;
     }

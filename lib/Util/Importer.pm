@@ -23,21 +23,40 @@ package Util::Importer {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $seed = Util::Encoder::decode_base32hex($state->{seed});
-
-    # print debug message
-    $debugger->write("[IMPRT]: Using seed: $seed");
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # process data from seend and save in hash  
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my @seed = split //, $state->{seed};
     my %seed_data;
+    my $key_counter = -1;
+    my $value = '';
 
-    # split the seed into its parts
-    my @seed_parts = split ',', $seed;
-    foreach(@seed_parts) {
-      my @keys = split ':', $_;
-      $seed_data{$keys[0]} = $keys[1];
+    # check seed start
+    if ($seed[0] =~ m/[0-9]/) {
+      die "Invalid seed.";
+    }
+    
+    # print debug message
+    $debugger->write("[IMPRT]: Using seed: $state->{seed}");
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # decompose the seed
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    foreach my $current_char (@seed) {
+      if ($current_char !~ m/[0-9]/) {
+        $key_counter++;
+        $seed_data{$key_counter} = 'NULL';
+        $value = '';
+        next;
+      }
+      if ($current_char =~ m/[0-9]/) {
+        $value = $value . $current_char;
+        $seed_data{$key_counter} = $value;
+      }
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # check difficulty and set default
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    if ($seed_data{0} eq 'NULL') {
+      $seed_data{0} = 0;
     }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

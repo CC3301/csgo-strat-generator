@@ -10,7 +10,6 @@ package Main {
 
   use Util::Importer;
 
-
   use Feature::Hardcore;
   use Feature::Items;
   use Feature::Strats;
@@ -45,22 +44,22 @@ package Main {
       
       # get the import data
       %seed_data = Util::Importer::Import($debugger, $state);
-      $difficulty = $seed_data{d};
+      $difficulty = $seed_data{0};
       $state->{difficulty} = $difficulty;
     
       # send a bunch of requests to the items module
-      %pistol   = Feature::Items::GetItemByBuy($debugger, 'pistols',  $seed_data{p} );
+      %pistol   = Feature::Items::GetItemByID($debugger, 'pistols',  $seed_data{1} );
 
-      %weapon   = Feature::Items::GetItemByBuy($debugger, 'weapons',  $seed_data{w} );
+      %weapon   = Feature::Items::GetItemByID($debugger, 'weapons',  $seed_data{2} );
   
-      %grenade1 = Feature::Items::GetItemByBuy($debugger, 'grenades', $seed_data{g0});
-      %grenade2 = Feature::Items::GetItemByBuy($debugger, 'grenades', $seed_data{g1});
+      %grenade1 = Feature::Items::GetItemByID($debugger, 'grenades', $seed_data{3});
+      %grenade2 = Feature::Items::GetItemByID($debugger, 'grenades', $seed_data{4});
 
-      %util1    = Feature::Items::GetItemByBuy($debugger, 'utils',    $seed_data{u0});
-      %util2    = Feature::Items::GetItemByBuy($debugger, 'utils',    $seed_data{u1});
+      %util1    = Feature::Items::GetItemByID($debugger, 'utils',    $seed_data{5});
+      %util2    = Feature::Items::GetItemByID($debugger, 'utils',    $seed_data{6});
 
       # generate strat
-      %strat = Feature::Strats::GetStrat($debugger, $difficulty, $seed_data{s}, $state);
+      %strat = Feature::Strats::GetStrat($debugger, $difficulty, $seed_data{7}, $state);
 
     } else {
     
@@ -223,6 +222,13 @@ package Main {
     $data{grenade_buys} = $grenade1{buy} . ';' . $grenade2{buy};
     $data{util_buys}    = $util1{buy} . ';' . $util2{buy};
     $data{weapon_buy}   = $weapon{buy};
+
+    $data{pistol_id}    = $pistol{id};
+    $data{weapon_id}    = $weapon{id};
+    $data{grenade_ids}  = $grenade1{id} . ';' . $grenade2{id};
+    $data{util_ids}     = $util1{id} . ';' . $util2{id};
+    $data{strat_id}     = $strat{id};
+
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data

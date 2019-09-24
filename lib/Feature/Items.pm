@@ -37,22 +37,23 @@ package Feature::Items {
     $return{name} = $items{$random_int}{name};
     $return{buy}  = $items{$random_int}{buy};
     $return{cost} = $items{$random_int}{cost};
+    $return{id}   = $items{$random_int}{id};
     
     return(%return);
 
   }
   
   #############################################################################
-  # GetItemByBuy subroutine
+  # GetItemByID subroutine
   #############################################################################
-  sub GetItemByBuy {
+  sub GetItemByID {
   
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get vars passed to function 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
     my $item_type = shift;
-    my $target_buy = shift || die "No target buy passed";
+    my $target_id = shift || die "No target ID passed";
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
@@ -62,7 +63,7 @@ package Feature::Items {
     my %return;
 
     # debug message
-    $debugger->write("[ITEMS]: Generating dataset for $item_type, want $target_buy");
+    $debugger->write("[ITEMS]: Generating dataset for $item_type, want $target_id");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # load items hash 
@@ -71,7 +72,7 @@ package Feature::Items {
     
     # to through the hash and try to find the wanted buy
     until ($local_counter == $counter) {
-      if ($target_buy eq $items{$local_counter}{buy}) {
+      if ($target_id eq $items{$local_counter}{id}) {
         $found = 1;
         last;
       }
@@ -80,7 +81,7 @@ package Feature::Items {
     
     # check if the item was found
     if ($found) {
-      $debugger->write("[ITEMS]: Found requestet dataset for $item_type at $local_counter");
+      $debugger->write("[ITEMS]: Found requestet dataset for $target_id at $local_counter");
     } else {
       $debugger->write("[ITEMS]: Could not find requested dataset");
       die "Seed import failed. Requested item not found. Maybe update your inventory.";
@@ -88,8 +89,9 @@ package Feature::Items {
     
     # construct the return hash
     $return{name} = $items{$local_counter}{name};
-    $return{buy} = $items{$local_counter}{buy};
+    $return{buy}  = $items{$local_counter}{buy};
     $return{cost} = $items{$local_counter}{cost};
+    $return{id}   = $items{$local_counter}{id};
 
     return(%return);
 
@@ -131,9 +133,10 @@ package Feature::Items {
       my @item_info = split ',', substr($item, index($item, $item_name) + length($item_name) + 1);
       my $item_buy  = $item_info[0];
       my $item_cost = $item_info[1];
+      my $item_id   = $item_info[2];
 
       # check if the line is valid
-      unless (@item_info == 2) {
+      unless (@item_info == 3) {
         my $h_counter = $counter+1;
         print "Malformed inventory file\n";
         print "\tI suspect the error to be near to:\n";
@@ -147,6 +150,7 @@ package Feature::Items {
       $items{$counter}{name} = $item_name;
       $items{$counter}{buy}  = $item_info[0];
       $items{$counter}{cost} = $item_info[1];
+      $items{$counter}{id}   = $item_info[2];
       
       # increment the index counter
       $counter++;

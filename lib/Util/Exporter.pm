@@ -70,7 +70,12 @@ package Util::Exporter {
         }
         print $fh "\n";
         print $fh "Difficulty: $difficulty\n";
-        print $fh "Total Cost: $data->{total_cost}\$\n";
+        if ($data->{total_cost_ct} == $data->{total_cost_t}) {
+          print $fh "Total Cost   : $data->{total_cost_ct}\$\n\n";
+        } else {
+          print $fh "Total Cost T : $data->{total_cost_t}\$\n";
+          print $fh "Total Cost CT: $data->{total_cost_ct}\$\n\n";
+        }
         print $fh "Command:\n";
         print $fh "\tbind $state->{default_key} \"$data->{command_string}\"\n";
         print $fh "\n";
@@ -102,8 +107,7 @@ package Util::Exporter {
       my ($seed) = _generate_seed($debugger, $data, $state);
       chomp $seed;
       print "==================================================================\n";
-      print "Seed:      $seed\n";
-      print "Seed(b32h): " . Util::Encoder::encode_base32hex($seed) . "\n";
+      print "Seed: $seed\n";
       print "==================================================================\n";
     }
 
@@ -134,22 +138,22 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # generate seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $seed = "d:$state->{difficulty}";
+    my $seed = "d$state->{difficulty}";
 
     # on difficulty 0, we have pistols and weapons, each need to be individually checked
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{pistols} || $state->{display_disabled})) {
-      $seed = $seed . ",p:$data->{pistol_buy}";
+      $seed = $seed . "p$data->{pistol_id}";
     }
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{weapons} || $state->{display_disabled})) {
-      $seed = $seed . ",w:$data->{weapon_buy}";
+      $seed = $seed . "w$data->{weapon_id}";
     }
     
     # on difficulty 1, we have grenades
     if ($state->{difficulty} >= 1 && (! $state->{disabled}->{grenades} || $state->{display_disabled})) {
       $counter = 0;
-      my @grenade_buys = split ';', $data->{grenade_buys};
-      foreach(@grenade_buys) {
-        $seed = $seed . ",g$counter:$_";
+      my @grenade_ids = split ';', $data->{grenade_ids};
+      foreach(@grenade_ids) {
+        $seed = $seed . "g$_";
         $counter++;
       }
     }
@@ -157,16 +161,16 @@ package Util::Exporter {
     # on difficulty 2, we have utilities
     if ($state->{difficulty} >= 2 && (! $state->{disabled}->{utils} || $state->{display_disabled})) {
       $counter = 0;
-      my @util_buys = split ';', $data->{util_buys};
-      foreach(@util_buys) {
-        $seed = $seed . ",u$counter:$_";
+      my @util_ids = split ';', $data->{util_ids};
+      foreach(@util_ids) {
+        $seed = $seed . "u$_";
         $counter++;
       }
     }
 
     # on difficulty 3, the only difference is if we have a strat or not. 
     if ($state->{difficulty} >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
-      $seed = $seed . ",s:$data->{strat_name}";
+      $seed = $seed . "s$data->{strat_id}";
     }
     
     

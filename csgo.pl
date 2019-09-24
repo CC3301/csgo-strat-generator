@@ -98,10 +98,6 @@ sub Main() {
     die "Dataset generation failure";
   }
 
-  if ($state{write_output}) {
-    Util::Exporter::Export($debugger, \%data, \%state);
-  }
-
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # print output 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -158,6 +154,11 @@ sub Main() {
   }
   print "Command:\n\tbind $state{default_key} \"$data{command_string}\"\n";
 
+  # should the output be saved?
+  if ($state{write_output}) {
+    Util::Exporter::Export($debugger, \%data, \%state);
+  }
+  
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
