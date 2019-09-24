@@ -21,7 +21,7 @@ sub Main() {
   # handle debugging 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my $debug_state = 0;
-  if ($ARGV[0] eq '--debug') {
+  if (defined($ARGV[0]) && $ARGV[0] eq '--debug') {
     shift(@ARGV);
     $debug_state = 1;
     eval {
