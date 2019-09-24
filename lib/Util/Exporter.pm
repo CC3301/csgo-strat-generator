@@ -5,8 +5,9 @@ package Util::Exporter {
   #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   use strict;
   use warnings;
-  
-  use MIME::Base64;
+ 
+  use lib 'lib/';
+  use Util::Encoder;
 
   #############################################################################
   # Export subroutine
@@ -28,53 +29,60 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # write output 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    open(my $fh, '>', 'export.txt');
-    
-      print $fh "csgo-strat-generator exported output\n";
-      print $fh "===========================================================\n";
-      if ($difficulty >= 0 && (! $state->{disable}->{pistol} || $state->{display_disabled})) {
-        print $fh "Pistol: $data->{pistol_name}\n";
-      }
-      if ($difficulty >= 0 && (! $state->{disable}->{weapon} || $state->{display_disabled})) {
-        print $fh "Weapon: $data->{weapon_name}\n";
-      }
-      if ($difficulty >= 1 && (! $state->{disable}->{grenades} || $state->{display_disabled})) {
-        print $fh "\n";
-        print $fh "Grenades:\n";
-        foreach(split ';', $data->{grenade_names}){
-          print $fh "\t- $_\n";
+    if ($state->{write_file}) {
+      open(my $fh, '>', 'export.txt');
+     
+        print $fh "csgo-strat-generator exported output\n";
+        print $fh "===========================================================\n";
+        if ($difficulty >= 0 && (! $state->{disable}->{pistol} || $state->{display_disabled})) {
+          print $fh "Pistol: $data->{pistol_name}\n";
         }
-      }
-      if ($difficulty >= 2 && (! $state->{disable}->{utils} || $state->{display_disabled})) {
-        print $fh "\n";
-        print $fh "Utilities:\n";
-        foreach(split ';', $data->{util_names}){
-          print $fh "\t- $_\n";
+        if ($difficulty >= 0 && (! $state->{disable}->{weapon} || $state->{display_disabled})) {
+          print $fh "Weapon: $data->{weapon_name}\n";
         }
-      }
-      if ($difficulty >= 6 && (! $state->{disable}->{hardcore} || $state->{display_disabled})) { 
-        print $fh "\n";
-        print $fh "Hardcore settings:\n";
-        foreach(split ';', $data->{hardcore}){
-          print $fh "\t- $_\n";
+        if ($difficulty >= 1 && (! $state->{disable}->{grenades} || $state->{display_disabled})) {
+          print $fh "\n";
+          print $fh "Grenades:\n";
+          foreach(split ';', $data->{grenade_names}){
+            print $fh "\t- $_\n";
+          }
         }
-      }
-      if ($difficulty >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
-        print $fh "\n";
-        print $fh "Strat: $data->{strat_name}\n";
-        foreach(split ';', $data->{strat_desc}){
-          print $fh "\t$_\n";
+        if ($difficulty >= 2 && (! $state->{disable}->{utils} || $state->{display_disabled})) {
+          print $fh "\n";
+          print $fh "Utilities:\n";
+          foreach(split ';', $data->{util_names}){
+            print $fh "\t- $_\n";
+          }
         }
-      }
-      print $fh "\n";
-      print $fh "Difficulty: $difficulty\n";
-      print $fh "Total Cost: $data->{total_cost}\$\n";
-      print $fh "Command:\n";
-      print $fh "\tbind $state->{default_key} \"$data->{command_string}\"\n";
-      print $fh "\n";
-      print $fh "===========================================================\n";
+        if ($difficulty >= 6 && (! $state->{disable}->{hardcore} || $state->{display_disabled})) { 
+          print $fh "\n";
+          print $fh "Hardcore settings:\n";
+          foreach(split ';', $data->{hardcore}){
+            print $fh "\t- $_\n";
+          }
+        }
+        if ($difficulty >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
+          print $fh "\n";
+          print $fh "Strat: $data->{strat_name}\n";
+          foreach(split ';', $data->{strat_desc}){
+            print $fh "\t$_\n";
+          }
+        }
+        print $fh "\n";
+        print $fh "Difficulty: $difficulty\n";
+        if ($data->{total_cost_ct} == $data->{total_cost_t}) {
+          print $fh "Total Cost   : $data->{total_cost_ct}\$\n\n";
+        } else {
+          print $fh "Total Cost T : $data->{total_cost_t}\$\n";
+          print $fh "Total Cost CT: $data->{total_cost_ct}\$\n\n";
+        }
+        print $fh "Command:\n";
+        print $fh "\tbind $state->{default_key} \"$data->{command_string}\"\n";
+        print $fh "\n";
+        print $fh "===========================================================\n";
 
-    close $fh;
+      close $fh;
+    }
 
     # write to csgo config directory
     if ($state->{write_csgo}) { 
@@ -86,7 +94,7 @@ package Util::Exporter {
         foreach (@userdata_dir) {
           open(my $fh1, '>', "$_/730/local/cfg/csgo-strat-gen.cfg") or warn "failed to write direct-apply config: $!\n for cfg_dir: $_";
             print $fh1 "bind $state->{default_key} \"$data->{command_string}\"\n";
-          close $fh;
+          close $fh1;
         }
       } else {
         $debugger->write("[EXPRT]: This feature is not available on $state->{os_type} right now.");
@@ -96,7 +104,8 @@ package Util::Exporter {
 
     # if the --export flag is set, export a seed
     if ($state->{export_seed}) {
-      my $seed = _generate_seed($debugger, $data, $state);
+      my ($seed) = _generate_seed($debugger, $data, $state);
+      chomp $seed;
       print "==================================================================\n";
       print "Seed: $seed\n";
       print "==================================================================\n";
@@ -122,43 +131,53 @@ package Util::Exporter {
     my $state = shift;
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $counter = 0;
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # generate seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $seed;
+    my $seed = "d$state->{difficulty}";
 
     # on difficulty 0, we have pistols and weapons, each need to be individually checked
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{pistols} || $state->{display_disabled})) {
-      # do stuff for difficulty 0 seed, pistol part
-      ;;
+      $seed = $seed . "p$data->{pistol_id}";
     }
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{weapons} || $state->{display_disabled})) {
-      # do stuff for difficulty 0 seed, weapon part
-      ;;
+      $seed = $seed . "w$data->{weapon_id}";
     }
     
     # on difficulty 1, we have grenades
     if ($state->{difficulty} >= 1 && (! $state->{disabled}->{grenades} || $state->{display_disabled})) {
-      # do stuff for difficulty 1 seed
-      ;;
+      $counter = 0;
+      my @grenade_ids = split ';', $data->{grenade_ids};
+      foreach(@grenade_ids) {
+        $seed = $seed . "g$_";
+        $counter++;
+      }
     }
 
     # on difficulty 2, we have utilities
     if ($state->{difficulty} >= 2 && (! $state->{disabled}->{utils} || $state->{display_disabled})) {
-      # do stuff for difficulty 2 seed
-      ;;
+      $counter = 0;
+      my @util_ids = split ';', $data->{util_ids};
+      foreach(@util_ids) {
+        $seed = $seed . "u$_";
+        $counter++;
+      }
     }
 
     # on difficulty 3, the only difference is if we have a strat or not. 
     if ($state->{difficulty} >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
-      # do stuff for difficulty 3 seed
-      ;;
+      $seed = $seed . "s$data->{strat_id}";
     }
     
     
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return(base64_encode($seed));
+    return($seed);
   }
 
   # perl needs this

@@ -41,7 +41,7 @@ package Util::Parser {
 
       if ($switch eq '-d' || $switch eq '--difficulty') {
         if ($args[$counter+1] !~ /^-?\d+$/) {
-          _local_error("--difficulty | -d :: option requires integer number argument");
+          die("--difficulty | -d :: option requires integer number argument");
         }
         $state{difficulty} = $args[$counter+1];
         push @nexts, $args[$counter+1];
@@ -65,7 +65,7 @@ package Util::Parser {
         $state{disable}{hardcore} = 0;
       } elsif ($switch eq '-k' || $switch eq '--default-key') {
         if (length($args[$counter+1]) != 1 ) {
-          _local_error("--default-key | -k :: option requires single character argument");
+          die("--default-key | -k :: option requires single character argument");
         }
         $state{default_key} = $args[$counter+1];
         push @nexts, $args[$counter+1];
@@ -73,11 +73,13 @@ package Util::Parser {
         $state{display_disabled} = 1;
       } elsif ($switch eq '--write') {
         $state{write_output} = 1;
+        $state{write_file} = 1;
       } elsif ($switch eq '--write-csgo') {
+        $state{write_output} = 1;
         $state{write_csgo} = 1;
       } elsif ($switch eq '--doc') {
         if (length($args[$counter+1]) == 0) {
-          _local_error("--doc :: option requires string type argument");
+          die("--doc :: option requires string type argument");
         }
         $state{display_doc} = 1;
         $state{display_doc_type} = $args[$counter+1];
@@ -86,12 +88,13 @@ package Util::Parser {
         $state{doc_list} = 1;
       } elsif ($switch eq '--import') {
         if (length($args[$counter+1]) == 0) {
-          _local_error("--import :: option requires string type argument");
+          die("--import :: option requires string type argument");
         }
         $state{import_seed} = 1;
         $state{seed} = $args[$counter+1];
         push @nexts, $args[$counter+1];
       } elsif ($switch eq '--export') {
+        $state{write_output} = 1;
         $state{export_seed} = 1;
       } else {
 
@@ -102,12 +105,11 @@ package Util::Parser {
           }
         }
         
-        
         if ($skip) {
           $counter++;
           next;
         }
-        _local_error("general error in command line options. Unknown parameter.");
+        die("general error in command line options. Unknown parameter.");
 
       }
       $counter++;
@@ -129,6 +131,7 @@ package Util::Parser {
     $debugger->write("[PARSE]: Setting: display_disabled  => $state{display_disabled}");
     $debugger->write("[PARSE]: Setting: write_output      => $state{write_output}");
     $debugger->write("[PARSE]: Setting: write_csgo        => $state{write_csgo}");
+    $debugger->write("[PARSE]: Setting: write_file        => $state{write_file}");
     $debugger->write("[PARSE]: Setting: display_doc       => $state{display_doc}");
     $debugger->write("[PARSE]: Setting: display_doc_type  => $state{display_doc_type}");
     $debugger->write("[PARSE]: Setting: doc_list          => $state{doc_list}");
@@ -166,6 +169,7 @@ package Util::Parser {
     $state{display_disabled}  = 0; 
     $state{write_output}      = 0;
     $state{write_csgo}        = 0;
+    $state{write_file}        = 0;
     $state{display_doc}       = 0;
     $state{display_doc_type}  = '';
     $state{doc_list}          = 0;
@@ -202,6 +206,11 @@ package Util::Parser {
     # other vars
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $file = 'data/config';
+    my %special_keys = (
+      'write_file' => 'write_output',
+      'write_csgo' => 'write_output',
+      'export_seed' => 'write_output',
+    );
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Open config file for reading 
@@ -215,7 +224,16 @@ package Util::Parser {
 
         my ($value, @keys) = _parse_config_line($debugger, $_);
         $debugger->write("[PARSE]: Config : " . join('.', @keys) . " :: $value");
+        
+        # check if key triggers other keys
+        foreach(keys %special_keys) {
+          if ($_ eq $keys[0]) {
+            $debugger->write("[PARSE]: Config: Found recusring key: $keys[0] -> $special_keys{$_}");
+            $state->{$special_keys{$_}} = $value;
+          }
+        }
 
+        # write keys
         if (@keys > 1) {
           $state->{$keys[0]}->{$keys[1]}  = $value;
         } else {
@@ -256,6 +274,8 @@ package Util::Parser {
       "disable.strats",
       "write_output",
       "write_csgo",
+      "write_file",
+      "export_seed",
     );
     my $key_valid = 0;
 
@@ -272,9 +292,7 @@ package Util::Parser {
         $key_valid = 1;
       }
     }
-      
-    # die when the key is not allowed
-    _local_error("Illegal config key") unless $key_valid;
+    die("Illegal config key") unless $key_valid;
 
     # parse the rest of the current line
     my $value   = substr($line, index($line, $key_str) + length($key_str) + 1);
@@ -288,18 +306,6 @@ package Util::Parser {
     # return values loaded from config 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return($value, @keys);
-  }
-
-  ##############################################################################
-  # _local_error subroutine
-  ##############################################################################
-  sub _local_error {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    die(shift);
-
   }
 
   # perl needs this
