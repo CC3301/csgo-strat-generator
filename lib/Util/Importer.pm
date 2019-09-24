@@ -6,7 +6,8 @@ package Util::Importer {
   use strict;
   use warnings;
 
-  use MIME::Base64;
+  use lib 'lib/';
+  use Util::Encoder;
 
   ##############################################################################
   # Import subroutine
@@ -22,7 +23,7 @@ package Util::Importer {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $seed = $state->{seed};
+    my $seed = Util::Encoder::decode_base32hex($state->{seed});
 
     # print debug message
     $debugger->write("[IMPRT]: Using seed: $seed");

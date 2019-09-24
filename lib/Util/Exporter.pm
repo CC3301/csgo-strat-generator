@@ -5,8 +5,9 @@ package Util::Exporter {
   #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   use strict;
   use warnings;
-  
-  use MIME::Base64;
+ 
+  use lib 'lib/';
+  use Util::Encoder;
 
   #############################################################################
   # Export subroutine
@@ -98,12 +99,11 @@ package Util::Exporter {
 
     # if the --export flag is set, export a seed
     if ($state->{export_seed}) {
-      my ($seed, $seed_encode) = _generate_seed($debugger, $data, $state);
+      my ($seed) = _generate_seed($debugger, $data, $state);
       chomp $seed;
-      chomp $seed_encode;
       print "==================================================================\n";
       print "Seed:      $seed\n";
-      print "Seed(b64): " . $seed_encode . "\n";
+      print "Seed(b32h): " . Util::Encoder::encode_base32hex($seed) . "\n";
       print "==================================================================\n";
     }
 
@@ -173,7 +173,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return($seed, encode_base64($seed));
+    return($seed);
   }
 
   # perl needs this
