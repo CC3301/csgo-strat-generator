@@ -73,7 +73,9 @@ package Util::Parser {
         $state{display_disabled} = 1;
       } elsif ($switch eq '--write') {
         $state{write_output} = 1;
+        $state{write_file} = 1;
       } elsif ($switch eq '--write-csgo') {
+        $state{write_output} = 1;
         $state{write_csgo} = 1;
       } elsif ($switch eq '--doc') {
         if (length($args[$counter+1]) == 0) {
@@ -92,6 +94,7 @@ package Util::Parser {
         $state{seed} = $args[$counter+1];
         push @nexts, $args[$counter+1];
       } elsif ($switch eq '--export') {
+        $state{write_output} = 1;
         $state{export_seed} = 1;
       } else {
 
@@ -101,7 +104,6 @@ package Util::Parser {
             next;
           }
         }
-        
         
         if ($skip) {
           $counter++;

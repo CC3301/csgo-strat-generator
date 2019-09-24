@@ -8,7 +8,7 @@ package Main {
 
   use lib 'lib/';
 
-  use Util::Import;
+  use Util::Importer;
 
 
   use Feature::Hardcore;
@@ -25,91 +25,117 @@ package Main {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
     my $difficulty = shift;
-    my %state = @_;
+    my $state = shift;
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # reserve namespace for a return hash 
+    # other vars
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %data;
+    my (%pistol, %weapon, %grenade1, %grenade2, %util1, %util2, %strat, @hardcore);
+    my %seed_data;
     
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # run all the generation code 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     $debugger->write("[MAIN] : Generating game-rule set..");
     $debugger->write("[MAIN] : Using difficulty: $difficulty..");
-    $debugger->write("[MAIN] : Using os_type: $state{os_type}");
+    $debugger->write("[MAIN] : Using os_type: $state->{os_type}");
     
+    if ($state->{import_seed}) {
+      
+      # get the import data
+      %seed_data = Util::Importer::Import($debugger, $state);
+      $difficulty = $seed_data{d};
+      $state->{difficulty} = $difficulty;
     
-    # generate a pistol
-    my %pistol = Feature::Items::GetItem($debugger, 'pistols');
-    while(_check_for_free_choice($debugger, $difficulty, %pistol)) {
+      # send a bunch of requests to the items module
+      %pistol   = Feature::Items::GetItemByBuy($debugger, 'pistols',  $seed_data{p} );
+
+      %weapon   = Feature::Items::GetItemByBuy($debugger, 'weapons',  $seed_data{w} );
+  
+      %grenade1 = Feature::Items::GetItemByBuy($debugger, 'grenades', $seed_data{g0});
+      %grenade2 = Feature::Items::GetItemByBuy($debugger, 'grenades', $seed_data{g1});
+
+      %util1    = Feature::Items::GetItemByBuy($debugger, 'utils',    $seed_data{u0});
+      %util2    = Feature::Items::GetItemByBuy($debugger, 'utils',    $seed_data{u1});
+
+      # generate strat
+      %strat = Feature::Strats::GetStrat($debugger, $difficulty, $seed_data{s}, $state);
+
+    } else {
+    
+      # generate a pistol
       %pistol = Feature::Items::GetItem($debugger, 'pistols');
-    }
+      while(_check_for_free_choice($debugger, $difficulty, %pistol)) {
+        %pistol = Feature::Items::GetItem($debugger, 'pistols');
+      }
 
-    # generate a weapon
-    my %weapon = Feature::Items::GetItem($debugger, 'weapons');
-    while(_check_for_free_choice($debugger, $difficulty, %weapon)) {
+      # generate a weapon
       %weapon = Feature::Items::GetItem($debugger, 'weapons');
-    }
+      while(_check_for_free_choice($debugger, $difficulty, %weapon)) {
+        %weapon = Feature::Items::GetItem($debugger, 'weapons');
+      }
 
-    # generate a grenade set
-    my %grenade1 = Feature::Items::GetItem($debugger, 'grenades');
-    my %grenade2 = Feature::Items::GetItem($debugger, 'grenades');
-    while(_check_for_free_choice($debugger, $difficulty, %grenade1)) {
+      # generate a grenade set
       %grenade1 = Feature::Items::GetItem($debugger, 'grenades');
-    }
-    while(_check_for_free_choice($debugger, $difficulty, %grenade2) || _check_for_duplicate($debugger, \%grenade1, \%grenade2)) {
       %grenade2 = Feature::Items::GetItem($debugger, 'grenades');
-    }
-
-    # generate a util set
-    my %util1 = Feature::Items::GetItem($debugger, 'utils');
-    my %util2 = Feature::Items::GetItem($debugger, 'utils');
-    while(_check_for_free_choice($debugger, $difficulty, %util1)) {
+      while(_check_for_free_choice($debugger, $difficulty, %grenade1)) {
+        %grenade1 = Feature::Items::GetItem($debugger, 'grenades');
+      }
+      while(_check_for_free_choice($debugger, $difficulty, %grenade2) || _check_for_duplicate($debugger, \%grenade1, \%grenade2)) {
+        %grenade2 = Feature::Items::GetItem($debugger, 'grenades');
+      }
+  
+      # generate a util set
       %util1 = Feature::Items::GetItem($debugger, 'utils');
-    }
-    while(_check_for_free_choice($debugger, $difficulty, %util2) || _check_for_duplicate($debugger, \%util1, \%util2)) {
       %util2 = Feature::Items::GetItem($debugger, 'utils');
-    }
-    if($util1{buy} eq 'vesthelm') {
-      while($util2{buy} eq 'vest') {
-        %util2 = Feature::Items::GetItem($debugger, 'utils');
-        if(_check_for_free_choice($debugger, $difficulty, %util2) || _check_for_duplicate($debugger, \%util1, \%util2)) {
-          $util2{buy} = 'vest';
-        }
-      }
-    }
-    if($util2{buy} eq 'vesthelm') {
-      while($util1{buy} eq 'vest') {
+      while(_check_for_free_choice($debugger, $difficulty, %util1)) {
         %util1 = Feature::Items::GetItem($debugger, 'utils');
-        if(_check_for_free_choice($debugger, $difficulty, %util1) || _check_for_duplicate($debugger, \%util1, \%util2)) {
-          $util1{buy} = 'vest';
+      }
+      while(_check_for_free_choice($debugger, $difficulty, %util2) || _check_for_duplicate($debugger, \%util1, \%util2)) {
+        %util2 = Feature::Items::GetItem($debugger, 'utils');
+      }
+      if($util1{buy} eq 'vesthelm') {
+        while($util2{buy} eq 'vest') {
+          %util2 = Feature::Items::GetItem($debugger, 'utils');
+          if(_check_for_free_choice($debugger, $difficulty, %util2) || _check_for_duplicate($debugger, \%util1, \%util2)) {
+            $util2{buy} = 'vest';
+          }
         }
       }
+      if($util2{buy} eq 'vesthelm') {
+        while($util1{buy} eq 'vest') {
+          %util1 = Feature::Items::GetItem($debugger, 'utils');
+          if(_check_for_free_choice($debugger, $difficulty, %util1) || _check_for_duplicate($debugger, \%util1, \%util2)) {
+            $util1{buy} = 'vest';
+          }
+        }
+      }
+  
+      # generate strat
+      %strat = Feature::Strats::GetStrat($debugger, $difficulty, '', $state);
+  
+      # generate hardcore settings
+      @hardcore = Feature::Hardcore::GetHardcore($debugger, $difficulty);
+
     }
-
-    # generate strat
-    my %strat = Feature::Strats::GetStrat($debugger, $difficulty);
-
-    # generate hardcore settings
-    my @hardcore = Feature::Hardcore::GetHardcore($debugger, $difficulty);
 
     $debugger->write("[MAIN] : Completed item, strat and hardcore generation.");
     
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # modify data by settings 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    if ($state{disable}{pistol}) {
+    if ($state->{disable}{pistol}) {
       $pistol{name} = 'Free choice';
       $pistol{cost} = 0;
       $pistol{buy} = 'NULL';
     }
-    if ($state{disable}{weapon}) {
+    if ($state->{disable}{weapon}) {
       $weapon{name} = 'Free choice';
       $weapon{cost} = 0;
       $weapon{buy} = 'NULL';
     }
-    if ($state{disable}{grenades}) {
+    if ($state->{disable}{grenades}) {
       $grenade1{name} = 'Free choice';
       $grenade2{name} = 'Free choice';
       $grenade1{cost} = 0;
@@ -117,7 +143,7 @@ package Main {
       $grenade1{buy} = 'NULL';
       $grenade2{buy} = 'NULL';
     }
-    if ($state{disable}{utils}) {
+    if ($state->{disable}{utils}) {
       $util1{name} = 'Free choice';
       $util2{name} = 'Free choice';
       $util1{cost} = 0;
@@ -125,7 +151,7 @@ package Main {
       $util1{buy} = 'NULL';
       $util2{buy} = 'NULL';
     }
-    if ($state{disable}{hardcore}) {
+    if ($state->{disable}{hardcore}) {
       my $hardcore_counter = 0;
       foreach(@hardcore) {
         $hardcore[$hardcore_counter] = 'None';
@@ -172,8 +198,8 @@ package Main {
     }
 
     # change command string to 'unbind all' when the user sets every disable flag available
-    if ($state{disable}{pistol} && $state{disable}{weapon} && $state{disable}{grenades} && $state{disable}{utils} && 
-        $state{disable}{hardcore} && $state{disable}{strats} ){
+    if ($state->{disable}->{pistol} && $state->{disable}->{weapon} && $state->{disable}->{grenades} && $state->{disable}->{utils} && 
+        $state->{disable}->{hardcore} && $state->{disable}->{strats} ){
 
           $data{command_string} = 'unbind all';
     }
@@ -193,49 +219,22 @@ package Main {
     $data{strat_desc}    = $strat{desc};
     $data{hardcore}      = $hardcore_string;
 
+    $data{pistol_buy}   = $pistol{buy};
+    $data{grenade_buys} = $grenade1{buy} . ';' . $grenade2{buy};
+    $data{util_buys}    = $util1{buy} . ';' . $util2{buy};
+    $data{weapon_buy}   = $weapon{buy};
+
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if (%data) {
-      return(%data);
+      return($difficulty, %data);
     } else {
       die("no data generated");
     }
 
   }
     
-  ##############################################################################
-  # Import subroutine
-  ##############################################################################
-  sub Import {
-  
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get data passed to function 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $state = shift;
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # other vars 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my %data; # reserve name for return hash
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # magic happens here 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    # get the parsed and imported seed-string
-    # my %seed_data = Util::Importer::Import($state->{seed});
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return data
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    if (%data) {
-      return(%data);
-    } else {
-      die("no data generated");
-    }
-  }
-
   ##############################################################################
   # _check_for_free_choice subroutine
   ##############################################################################

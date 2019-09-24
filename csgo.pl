@@ -24,6 +24,12 @@ sub Main() {
   if ($ARGV[0] eq '--debug') {
     shift(@ARGV);
     $debug_state = 1;
+    eval {
+      use Carp::Always;
+    };
+    if (@_) {
+      print "Failed to load Carp::Always. No stacktraces will be available.\n";
+    }
   }
   my $debugger = Util::Debug->new(
     enable => $debug_state,
@@ -83,11 +89,8 @@ sub Main() {
   # get dataset 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my %data;
-  if ($state{import_seed}) {
-    %data = Main::Import($debugger, \%state);
-  } else {
-    %data = Main::Run($debugger, $difficulty, %state);
-  }
+  ($difficulty, %data) = Main::Run($debugger, $difficulty, \%state);
+  $state{difficulty} = $difficulty;
 
   # check if there was anything returned
   if (! %data) {

@@ -23,14 +23,86 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
     my $target_score = shift;
+    my $target_name = shift;
+    my $state = shift;
+
     $debugger->write("[STRAT]: Targetting strat score: $target_score");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my %strats;
-    my $counter = 0;
     my %return;
+    my $local_counter = 0;
+    my $found = 0;
+    my $do_until = 1;
+      
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # load the strats inventory 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my ($counter, %strats) = _load_strats($debugger);
+
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # tell the score calculation system what kind of score we are aiming for
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $strat_index = _eval_strat_score($debugger, $counter, $target_score, %strats);
+
+    # check if we even found a strat and if yes, then return the details about
+    # this strat
+    if ($state->{import_seed}) {
+
+      if ($target_name eq 'Anonymus') {
+        $strat_index = 'error';
+        $found = 1;
+        $do_until = 0;
+      }
+      
+      if ($do_until) {
+        until($local_counter == $counter) {
+          if ($strats{$local_counter}{name} eq $target_name) {
+            $found = 1;
+            $strat_index = $local_counter;
+            last;
+          }
+          $local_counter++;
+        }
+      }
+    }
+
+    if ($strat_index eq 'error') {
+      $return{name}  = "Anonymus";
+      $return{desc}  = "I am sorry, but i didnt find any strat for you";
+      $return{score} = 0;
+      $debugger->write("[STRAT]: Could not find matching strategy with score"); 
+    } else {
+      $return{name}  = $strats{$strat_index}{name};
+      $return{desc}  = $strats{$strat_index}{desc};
+      $return{score} = $strats{$strat_index}{score};
+      $debugger->write("[STRAT]: Found matching strategy with score: " . $return{score});
+    }
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return data
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return(%return);
+
+  }
+
+  ##############################################################################
+  # _load_strats subroutine 
+  ##############################################################################
+  sub _load_strats {
+  
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to function 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
+
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my %strats;
+    my $counter = 0; 
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get the list of strats available and store them in a hash 
@@ -75,29 +147,9 @@ package Feature::Strats {
     $debugger->write("[STRAT]: Finished processing strategy inventory");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # tell the score calculation system what kind of score we are aiming for
+    # return strats
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $strat_index = _eval_strat_score($debugger, $counter, $target_score, %strats);
-
-    # check if we even found a strat and if yes, then return the details about
-    # this strat
-    if ($strat_index eq 'error') {
-      $return{name}  = "Anonymus";
-      $return{desc}  = "I am sorry, but i didnt find any strat for you";
-      $return{score} = 0;
-      $debugger->write("[STRAT]: Could not find matching strategy with score");
-    } else {
-      $return{name}  = $strats{$strat_index}{name};
-      $return{desc}  = $strats{$strat_index}{desc};
-      $return{score} = $strats{$strat_index}{score};
-      $debugger->write("[STRAT]: Found matching strategy with score: " . $return{score});
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return data
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return(%return);
-
+    return($counter, %strats);
   }
 
   ##############################################################################

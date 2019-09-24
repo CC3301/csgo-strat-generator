@@ -1,4 +1,4 @@
-package Util::Import {
+package Util::Importer {
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # import modules 
@@ -17,13 +17,27 @@ package Util::Import {
     # get data passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
-    my $seed = base64_decode(shift());
-    
+    my $state = shift;
+   
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $seed = $state->{seed};
+
+    # print debug message
+    $debugger->write("[IMPRT]: Using seed: $seed");
+
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # process data from seend and save in hash  
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %seed_data;
-    
+
+    # split the seed into its parts
+    my @seed_parts = split ',', $seed;
+    foreach(@seed_parts) {
+      my @keys = split ':', $_;
+      $seed_data{$keys[0]} = $keys[1];
+    }
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
