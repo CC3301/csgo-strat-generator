@@ -1,7 +1,22 @@
-Glock 18 / USP-S:NULL,0-0,0
-Glock 18 / P2000:NULL,0-0,1
-Dual Berretas:elite,400-400,2
-Tec 9 / Five Seven:tec9,500-500,3
-Desert Eagle:deagle,700-700,4
-R8 Revolver:deagle,600-600,5
-Free Choice:NONE,0-0,6
+Free Choice:NONE,0-0,0
+Glock-18 / USP-S:NULL,0-0,1
+Glock-18 / USP:NULL,0-0,2
+Glock-18 / P2000:NULL,0-0,3
+Dual Berettas:elite,400-400,4
+Dual Berettas:elite,400-400,4
+Dual Berettas:elite,400-400,4
+P250:p250,300-300,5
+P250:p250,300-300,5
+P250:p250,300-300,5
+Tec-9 / Five-Seven:tec9,500-500,6
+Tec-9 / Five-Seven:tec9,500-500,6
+Tec-9 / Five-Seven:tec9,500-500,6
+CZ75-Auto:tec9,500-500,7
+CZ75-Auto:tec9,500-500,7
+CZ75-Auto:tec9,500-500,7
+Desert Eagle:deagle,700-700,8
+Desert Eagle:deagle,700-700,8
+Desert Eagle:deagle,700-700,8
+R8 Revolver:deagle,600-600,9
+R8 Revolver:deagle,600-600,9
+R8 Revolver:deagle,600-600,9
