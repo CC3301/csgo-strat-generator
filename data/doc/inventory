@@ -30,29 +30,8 @@ Documentation for inventory files.
   Default inventory files:
 
     Note: the supplied inventory files have been created with the latest set of items (as of 09/2019).
-    Some item entries may occure two or up to three times, this is to keep their the chance of being
-    generated as balanced as possible. Responsible for this are the alternates for several but mostly
-    the ct-sited weapon slots, since some alternates (M4A1-S and USP-S) can and should be used twice, 
-    once with and once without the suppressor screwed on.
-
-      e.q.:
-            A:
-                1. M4A4   (non-silenced weapon)
-                2. M4A1-S (alternative, silenced weapon )
-                3. M4A1   (alternative, silenced weapon, but used without suppressor)
-                4. Nova   \
-                5. Nova    } (listed three times for balancing reason)
-                6. Nova   /
-                ...
-            B:  
-                1. P2000  (non-silenced pistol)
-                2. USP-S  (alternative, silenced pistol)
-                3. USP    (alternative, silenced pistol, but used without suppressor)
-                4. Tec-9  \
-                5. Tec-9   } (listed three times for balancing reason)
-                6. Tec-9  /
-                ...
-
+    Some weapon slots may be listed multiple times, since some alternates (M4A1-S and USP-S) can and
+    should be used twice, once with and once without the suppressor screwed on.
 
 
   Syntax:
