@@ -7,7 +7,6 @@ package Util::Exporter {
   use warnings;
  
   use lib 'lib/';
-  use Util::Encoder;
 
   #############################################################################
   # Export subroutine

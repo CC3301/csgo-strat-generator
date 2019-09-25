@@ -24,12 +24,9 @@ sub Main() {
   if (defined($ARGV[0]) && $ARGV[0] eq '--debug') {
     shift(@ARGV);
     $debug_state = 1;
-    eval {
-      use Carp::Always;
-    };
-    if (@_) {
-      print "Failed to load Carp::Always. No stacktraces will be available.\n";
-    }
+  }
+  if ($debug_state) {
+    eval "use Carp::Always;";
   }
   my $debugger = Util::Debug->new(
     enable => $debug_state,
