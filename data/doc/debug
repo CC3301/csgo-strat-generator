@@ -1,2 +1,23 @@
-The debug mode is enabled by setting the command line option: '--debug'
-This has to be the first option you pass.
+
+Documentation for the debug mode
+
+  Description:
+
+    The debug mode is used to find errors, what might be going wrong and just general 
+    troubleshooting. The debug mode is enabled by using '--debug' on the command line.
+
+
+
+  How debug mode works internally:
+
+    All debug messages are written (with timestamp and module name) to a log file, which is located in
+    'log/latest.log'. The debug mode also tries to load the perl module 'Carp::Always', which allowes
+    for stack traces on program crashes. 
+
+
+
+  Intention:
+
+    For development purposes only, proving in-depth information about what is going on under the hood
+    of this software.
+

@@ -1,0 +1,29 @@
+
+Documentation about the documentation. Hell yeah, recursion!
+
+  Description: 
+
+    Documentation is used to assist the user in using the software it was provided with.
+
+
+
+  How documentation works internally:
+
+    If, anywhere on the command line, a '--doc' flag is detected, normal operation will
+    be ignored and only the documentation part will be executed. The documentation files are
+    located in the 'data' folder in the 'doc' subdirectory. These files are read line by 
+    line and are then printed to the terminal, without any checks or parsing.
+
+
+
+  Intention:
+
+    Provide a piece of information that the user can use not much different than actually using the 
+    program itself. Help the user understand how this program works and encourage self-development.
+
+
+
+  Syntax:
+
+    Honestly, just look at the oder documentation files and try to copy the format in which those are written.
+    As mentioned above these files do not go through any sort of parsing or integrity checks.

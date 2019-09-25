@@ -1,47 +1,74 @@
-Information about the csgo-strat gen config file
 
-  Basically, every option you can set with the command line arguments can also be set
-  in the config. There is a certain hierarchy to this concept:
+Documentation for the config system.
+
+  Description:
+
+    The config file, located inside the data folder, is used to customize the behaviour of this 
+    program permanently. Below is a list of config keys which can be used. You might find that
+    a lot of the config keys can also be used as command line arguments and vice versa. This is not
+    true. Every config key can also be specified as command line argument, but not every command line
+    argument can be written in the form of a config key.
+
+
+
+  How the config works internally:
+
+    The config file is read by the parser after setting the hard coded default values, thus overwriting
+    these default settings. After reading the config file, the parser continues to read the command line
+    arguments, which in turn overwrite anything set in the config. Only certian config keys are allowed,
+    a list of which is supplied below. These config settings are then stored in the same states-table
+    as all other settings, making it easy to add new options and remove old ones.
+
+
+
+  Intention:
+
+    The config is intended to persistantly hold user specific settings. This allows the user to
+    set own options, i.e. the user might not want to have pistols generated, therefore he can set
+    the 'disable.pistol' key in the config. This setting is saved until he edits the config file again.
+    This prevents the user form having to specifty the '--disable-pistol' flag everytime the user 
+    wants to run this program.
   
-  - Default is set in the source code
-  - Config overwrites Default
-  - Command line options overwrite Config
 
-  
-  To use this function, create a file called 'config' inside the data folder. The
-  following list of config keys can be set, grouped by the type of setting you 
-  can add to them.
 
-  Integer:
-    - difficulty
+  Syntax:
 
-  String:
-    - default_key
+      The config file syntax is pretty simple:
 
-  Boolean:
-    - disable.pistol
-    - disable.weapon
-    - disable.grenades
-    - disable.utils
-    - disable.hardcore
-    - disable.strats
-    - display_disabled
-    - write_output
-    - write_csgo
+        key:value
 
-  
 
-  When it comes to the config file syntax, you might wonder why things look like 
-  they look. Basically its a key-value storage. Internally some settings are grouped.
-  This is where the '.' comes into play. It seperates the setting group by the setting
-  itself. So in the case of 'disable.pistol', 'disable' is the setting group and
-  'pistol' is the setting name. Followed by a colon comes the value. Here are some
-  examples:
 
-    - disable.pistol:1
-    - default_key:c
-    - difficulty:10
+  List of config keys:
 
-  If there is a different type of value there, which is not of the expected type,
-  the script will die. Usually you get a pretty good representation of where the
-  error is in the config file.
+    This is a list of all config keys, along side with what values can be assigned to them.
+
+    'difficulty'        |  Accepts any integer, except negative ones 
+    'default_key'       |  Accepts any type of alpha-numeric character(s)
+    'disable.pistol'    |  Accpets a boolean-type value, either 1 or 0
+    'disable.weapon'    |  Accpets a boolean-type value, either 1 or 0
+    'disable.grenades'  |  Accpets a boolean-type value, either 1 or 0
+    'disable.utils'     |  Accpets a boolean-type value, either 1 or 0
+    'disable.hardcore'  |  Accpets a boolean-type value, either 1 or 0
+    'disable.strats'    |  Accpets a boolean-type value, either 1 or 0
+    'display_disabled'  |  Accepts a boolean-type vlaue, either 1 or 0
+    'write_csgo'        |  Accepts a boolean-type vlaue, either 1 or 0
+    'write_file'        |  Accepts a boolean-type vlaue, either 1 or 0
+    'export_seed'       |  Accepts a boolean-type vlaue, either 1 or 0
+
+    
+    This is a list of all config keys, along side with what settings they actually change.
+    
+    'difficulty'        |  Sets the difficulty the program will run with  
+    'default_key'       |  Sets the default key used in the buy command
+    'disable.pistol'    |  Disables pistol generation
+    'disable.weapon'    |  Disables weapon generation
+    'disable.grenades'  |  Disables grenade generation  
+    'disable.utils'     |  Disables utility generation
+    'disable.hardcore'  |  Disables hardcore setting generation
+    'disable.strats'    |  Disables strat generation
+    'display_disabled'  |  Show disabled settings in the output, even if they would otherwise be hidden 
+    'write_csgo'        |  Write a config file with the buy command to the csgo config folder (Windows only)
+    'write_file'        |  Write the output generated into a text file
+    'export_seed'       |  Print the seed on output
+
