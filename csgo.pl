@@ -10,7 +10,7 @@ use Util::Doc;
 use Main;
 
 # current version
-my $VERSION = 'v1.0';
+my $VERSION = 'v1.2';
 
 ################################################################################
 # Main subroutine

@@ -23,8 +23,15 @@ Documentation for inventory files.
 
     Make it easy to add new items, say after Valve decides to add a new weapon, grenade or utility
     to the game. Same goes for strats, allow the easy modification of this file to expand the strat
-    inventory available.
+    inventory available. 
 
+
+
+  Default inventory files:
+
+    Note: the supplied inventory files have been created with the latest set of items (as of 09/2019).
+    Some weapon slots may be listed multiple times, since some alternates (M4A1-S and USP-S) can and
+    should be used twice, once with and once without the suppressor screwed on.
 
 
   Syntax:
