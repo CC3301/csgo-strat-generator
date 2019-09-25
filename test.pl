@@ -14,7 +14,7 @@ use Data::Dumper;
 use lib '.';
 
 # get the amout of test in argv
-my $test_count = 200;
+my $test_count = shift @ARGV;
 my @seeds;
 my %results;
 
@@ -49,7 +49,7 @@ foreach my $difficulty_out (0..21) {
 # run the tests as requested
 foreach my $curren_test (0..$test_count-1) {
   foreach(0..21) {
-    print "\rCurrent Test: $curren_test/$test_count\tSubtest: $_/21";
+    print "\rCurrent Test: $curren_test/$test_count\tSubtest: $_/21   ";
     _run_test($_);
   }
 }
@@ -115,22 +115,6 @@ sub _calc_results {
 
     # increment the counter
     $counter++;
-  }
-
-  foreach my $difficulty (0..21) {
-
-    # pistol ids
-    foreach my $pistol_id (0..9) {
-      if ($seed_data{1} == $pistol_id) {
-        $results{$difficulty}{pistol_ids}{$pistol_id}{count}++;
-      }
-    }
-    # weapon ids
-    foreach my $weapon_id (0..19) {
-      if ($seed_data{1} == $weapon_id) {
-        $results{$difficulty}{weapon_ids}{$weapon_id}{count}++;
-      }
-    } 
   }
 
   # print the results
