@@ -1,41 +1,37 @@
-Presenting the seed-system:
 
-  Seeds are strings of data, exported by the program when the '--export' flag is set. Seeds
-  can be shared accross computers and platforms, meaning no more hassle for you to copy
-  the buy string to your friends, while you can just use the '--write-csgo' feature. No more
-  sharing of screenshots for strats is required. The exported seed can be imported to another
-  instance of this program and will produce the same output as in the instance it was exported
-  from. 
+Documentation file for the seed system.
 
-  Some technical information about seeds:
+  Description:
 
-    Seeds are base64 encoded strings of data in a certain format. The seed can be imported/exported
-    stored and imported at any time. (Due to future technical changes, seeds might only work in 
-    supported versions, since the feature will change over time.) The data format in which the seed is
-    before encoding and after decoding, is defined as follows:
-
-    p:p2000,w:ak47,
-
-    This is a simple key value format and should be really easy to use and understand.
-
-
-  How to use seeds:
-
-    Export:
-      Run the csgo-strat-generator with the flag '--export' to generate a seed form the generated
-      game-rule set.
-
-    Import: 
-      Run the csgo-strat-generator with the flag '--import <seed>' to generate a game-rule set
-      according to what the output was.
+    A seed is a string of data that can be retrieved by supplying the '--export' flag on the command
+    line or setting 'export_seed' to 1 in the config. Check the config documentation if you whish to 
+    know how to do that. This exported seed can be imported into the program buy supplying the
+    '--import' flag followed by a space and the seed. Note that you should qoute the seed with 
+    single qoutes to avoid your shell (bash/zsh/sh/etc..) from trying to read that string.
 
 
 
-  Known/Expected issues:
+  How seeds work internally:
 
-    There is a chance that the config between the users differ. Which might result in items/settings
-    not being displayed even though they were originally generated.
+    The seed is effectively a semi-random string of numbers, letters (upper and lower case) and special
+    characters.
+    Upon closer inspection, you might notice that, although the seed might look completely different,
+    the numbers will always stay the same and - most importantly - they stay at the same spot in the seed.
+    When importing a seed, another output seed is generated. It does differ but only in the random parts.
+    The numbers stay, as previously mentioned, the same. 
 
-    When there is a p2000/USP-S/Glock as pistol setting, there is a chance that the outputs differ,
-    because the buy-slug for each of those is "NULL" since there is no point in buying a glock/USP-S/
-    P2000. This might result in different ouput than originally generated.
+    These numbers are the item id's. Wether the number is the pistol id or something else, is defined
+    by its position inside the seed. The first index, aka the first number represents the difficulty.
+    If two non-numeric characters follow after each other, the "invisble" index between these characters
+    is automatically set to 0. The seed lenght can vary, depending on the difficulty that is set. 
+    However, due to the item-generation algorithm, we need to fill the "rest" of the values in the internal
+    seed data storage up with 0's. Otherwise the item generation is going to fail.
+
+
+
+  Intention:
+
+    Seeds are intended to easily share game-rule sets with your friends. Who can then import the seed to 
+    their own instance of this program, which allows them to use other features such as the '--write-csgo'
+    option.
+
