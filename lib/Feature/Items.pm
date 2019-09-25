@@ -53,7 +53,7 @@ package Feature::Items {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
     my $item_type = shift;
-    my $target_id = shift || die "No target ID passed";
+    my $target_id = shift; die "No target ID passed" unless defined $target_id;
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 

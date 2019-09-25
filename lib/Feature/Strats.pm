@@ -23,8 +23,13 @@ package Feature::Strats {
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
     my $target_score = shift;
-    my $target_id = shift;
     my $state = shift;
+    my $target_id = shift; 
+
+    # if we want to import something and the target id is not set, then die
+    if ($state->{import_seed} && ! defined $target_id) {
+      die "No target id passed";
+    }
 
     $debugger->write("[STRAT]: Targetting strat score: $target_score");
 
@@ -57,6 +62,7 @@ package Feature::Strats {
         $do_until = 0;
       }
       
+      # search for a matching strat-id
       if ($do_until) {
         until($local_counter == $counter) {
           if ($strats{$local_counter}{id} eq $target_id) {
