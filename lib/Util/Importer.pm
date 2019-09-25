@@ -7,7 +7,6 @@ package Util::Importer {
   use warnings;
 
   use lib 'lib/';
-  use Util::Encoder;
 
   ##############################################################################
   # Import subroutine
