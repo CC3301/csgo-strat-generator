@@ -21,9 +21,12 @@ sub Main() {
   # handle debugging 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my $debug_state = 0;
-  if ($ARGV[0] eq '--debug') {
+  if (defined($ARGV[0]) && $ARGV[0] eq '--debug') {
     shift(@ARGV);
     $debug_state = 1;
+  }
+  if ($debug_state) {
+    eval "use Carp::Always;";
   }
   my $debugger = Util::Debug->new(
     enable => $debug_state,
@@ -83,20 +86,13 @@ sub Main() {
   # get dataset 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   my %data;
-  if ($state{import_seed}) {
-    %data = Main::Import($debugger, \%state);
-  } else {
-    %data = Main::Run($debugger, $difficulty, %state);
-  }
+  ($difficulty, %data) = Main::Run($debugger, $difficulty, \%state);
+  $state{difficulty} = $difficulty;
 
   # check if there was anything returned
   if (! %data) {
     $debugger->write("[WRAP] : Didn't get dataset. Using import: " . $state{import_seed} ? "Yes" : "No" );
     die "Dataset generation failure";
-  }
-
-  if ($state{write_output}) {
-    Util::Exporter::Export($debugger, \%data, \%state);
   }
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -155,6 +151,11 @@ sub Main() {
   }
   print "Command:\n\tbind $state{default_key} \"$data{command_string}\"\n";
 
+  # should the output be saved?
+  if ($state{write_output}) {
+    Util::Exporter::Export($debugger, \%data, \%state);
+  }
+  
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # return
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

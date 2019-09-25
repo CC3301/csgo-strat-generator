@@ -1,6 +1,6 @@
-Flashbang:flashbang,200-200
-Decoy Grenade:decoy,50-50
-HE Grenade:hegrenade,300-300
-Smoke Grenade:smokegrenade,300-300
-Incendiary Grenade / Molotov:molotov,600-400
-Free Choice:NONE,0-0
+Free Choice:NONE,0-0,0
+Flashbang:flashbang,200-200,1
+Decoy Grenade:decoy,50-50,2
+HE Grenade:hegrenade,300-300,3
+Smoke Grenade:smokegrenade,300-300,4
+Incendiary Grenade / Molotov:molotov,600-400,5

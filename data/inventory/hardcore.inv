@@ -1,5 +1,5 @@
-No Jumping
-No Crouching
-No Sneaking
-Only Main weapons
-No Grenades
+No Jumping,1
+No Crouching,2
+No Sneaking,3
+Only Main weapons,4
+No Grenades,5
