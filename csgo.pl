@@ -9,7 +9,7 @@ use Util::Exporter;
 use Util::Doc;
 use Main;
 
-# debug for this main part of csgo-strat gen on or off
+# current version
 my $VERSION = 'v1.0';
 
 ################################################################################
@@ -99,8 +99,8 @@ sub Main() {
   # print output 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   $debugger->write("[WRAP] : Priting output");
-  print "CSGO strat-generator $VERSION output:\n\n";
-  print "===================================================================\n";
+  print "\nCSGO strat-generator $VERSION output:\n";
+  print "===================================================================\n\n";
   
   if ($difficulty >= 0 && (! $state{disable}{pistol} || $state{display_disabled})) {
     print "Pistol   : " . $data{pistol_name}   . "\n";
@@ -140,7 +140,7 @@ sub Main() {
   }
 
   # print the rest of the stats
-  print "===================================================================\n";
+  print "\n===================================================================\n";
   print "\nDifficulty   : $difficulty\n";
 
   if ($data{total_cost_ct} == $data{total_cost_t}) {

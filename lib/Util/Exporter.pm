@@ -7,6 +7,8 @@ package Util::Exporter {
   use warnings;
  
   use lib 'lib/';
+  #use Util::Tools;
+  use Util::Random;
 
   #############################################################################
   # Export subroutine
@@ -19,6 +21,13 @@ package Util::Exporter {
     my $debugger = shift;
     my $data  = shift;
     my $state = shift;
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&/><!?][}{+~*%#@';
+    my @chars = split //, $chars;
+    @chars = _shuffle($debugger, \@chars);
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # transform some vars into a more readable format 
@@ -103,11 +112,11 @@ package Util::Exporter {
 
     # if the --export flag is set, export a seed
     if ($state->{export_seed}) {
-      my ($seed) = _generate_seed($debugger, $data, $state);
+      my ($seed) = _generate_seed($debugger, $data, $state, \@chars);
       chomp $seed;
-      print "==================================================================\n";
-      print "Seed: $seed\n";
-      print "==================================================================\n";
+      print "\n==================================================================\n";
+      print "Seed: '$seed'\n";
+      print "==================================================================\n\n";
     }
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -128,23 +137,25 @@ package Util::Exporter {
     my $debugger = shift;
     my $data = shift;
     my $state = shift;
+    my $chars = shift;
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $counter = 0;
+    my $char_count = @$chars;
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # generate seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $seed = "d$state->{difficulty}";
+    my $seed = "@$chars[Util::Random::GetRandom($debugger, $char_count)]$state->{difficulty}";
 
     # on difficulty 0, we have pistols and weapons, each need to be individually checked
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{pistols} || $state->{display_disabled})) {
-      $seed = $seed . "p$data->{pistol_id}";
+      $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$data->{pistol_id}";
     }
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{weapons} || $state->{display_disabled})) {
-      $seed = $seed . "w$data->{weapon_id}";
+      $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$data->{weapon_id}";
     }
     
     # on difficulty 1, we have grenades
@@ -152,7 +163,7 @@ package Util::Exporter {
       $counter = 0;
       my @grenade_ids = split ';', $data->{grenade_ids};
       foreach(@grenade_ids) {
-        $seed = $seed . "g$_";
+        $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$_";
         $counter++;
       }
     }
@@ -162,14 +173,14 @@ package Util::Exporter {
       $counter = 0;
       my @util_ids = split ';', $data->{util_ids};
       foreach(@util_ids) {
-        $seed = $seed . "u$_";
+        $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$_";
         $counter++;
       }
     }
 
     # on difficulty 3, the only difference is if we have a strat or not. 
     if ($state->{difficulty} >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
-      $seed = $seed . "s$data->{strat_id}";
+      $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$data->{strat_id}";
     }
     
     
@@ -177,6 +188,34 @@ package Util::Exporter {
     # return seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return($seed);
+  }
+
+  ##############################################################################
+  # _shuffle subroutine
+  ##############################################################################
+  sub _shuffle {
+ 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to the function
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
+    my $deck = shift;
+ 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $i = @$deck;
+ 
+    # randomize the array
+    while($i--) {
+      my $j = Util::Random::GetRandom($debugger, $i+1);
+      @$deck[$i,$j] = @$deck[$j,$i];
+    }   
+ 
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return(@$deck);
   }
 
   # perl needs this

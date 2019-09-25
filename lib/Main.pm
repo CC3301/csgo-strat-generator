@@ -59,7 +59,10 @@ package Main {
       %util2    = Feature::Items::GetItemByID($debugger, 'utils',    $seed_data{6});
 
       # generate strat
-      %strat = Feature::Strats::GetStrat($debugger, $difficulty, $seed_data{7}, $state);
+      %strat = Feature::Strats::GetStrat($debugger, $difficulty, $state, $seed_data{7});
+
+      # generate hardcore settings
+      # %hardcore = Feature::Hardcore::GetHardcoreByID($debugger, $seed_data{8});
 
     } else {
     
@@ -112,10 +115,10 @@ package Main {
       }
   
       # generate strat
-      %strat = Feature::Strats::GetStrat($debugger, $difficulty, '', $state);
+      %strat = Feature::Strats::GetStrat($debugger, $difficulty, $state);
   
       # generate hardcore settings
-      @hardcore = Feature::Hardcore::GetHardcore($debugger, $difficulty);
+      # %hardcore = Feature::Hardcore::GetHardcore($debugger, $state);
 
     }
 
