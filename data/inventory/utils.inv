@@ -1,5 +1,5 @@
-Kevlar:vest,650-650
-Kevlar and Helmet:vesthelm,1000-1000
-Zeus:taser,200-200
-Defuse/Rescue Kit:defuser,400-0
-Free Choice:NONE,0-0
+Free Choice:NONE,0-0,0
+Kevlar:vest,650-650,1
+Kevlar and Helmet:vesthelm,1000-1000,2
+Zeus:taser,200-200,3
+Defuse/Rescue Kit:defuser,400-0,4

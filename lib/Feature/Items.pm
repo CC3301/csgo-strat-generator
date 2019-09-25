@@ -11,7 +11,7 @@ package Feature::Items {
   use Util::ReadInventory;
 
   #############################################################################
-  # GetWeapon subroutine
+  # GetItem subroutine
   #############################################################################
   sub GetItem {
     
@@ -23,13 +23,99 @@ package Feature::Items {
     $debugger->write("[ITEMS]: Generating dataset for $item_type");
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get items hash table 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my ($counter, %items) = _load_items($debugger, $item_type);
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get a random number with the max being the index counter
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $random_int = Util::Random::GetRandom($debugger, $counter);
+
+    # return whatever is stored in the items hash at the random index
+    my %return;
+    $return{name} = $items{$random_int}{name};
+    $return{buy}  = $items{$random_int}{buy};
+    $return{cost} = $items{$random_int}{cost};
+    $return{id}   = $items{$random_int}{id};
+    
+    return(%return);
+
+  }
+  
+  #############################################################################
+  # GetItemByID subroutine
+  #############################################################################
+  sub GetItemByID {
+  
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to function 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
+    my $item_type = shift;
+    my $target_id = shift || die "No target ID passed";
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # other vars 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $local_counter = 0;
+    my $found = 0;
+    my %return;
+
+    # debug message
+    $debugger->write("[ITEMS]: Generating dataset for $item_type, want $target_id");
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # load items hash 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my ($counter, %items) = _load_items($debugger, $item_type);
+    
+    # to through the hash and try to find the wanted buy
+    until ($local_counter == $counter) {
+      if ($target_id eq $items{$local_counter}{id}) {
+        $found = 1;
+        last;
+      }
+      $local_counter++;
+    }
+    
+    # check if the item was found
+    if ($found) {
+      $debugger->write("[ITEMS]: Found requestet dataset for $target_id at $local_counter");
+    } else {
+      $debugger->write("[ITEMS]: Could not find requested dataset");
+      die "Seed import failed. Requested item not found. Maybe update your inventory.";
+    }
+    
+    # construct the return hash
+    $return{name} = $items{$local_counter}{name};
+    $return{buy}  = $items{$local_counter}{buy};
+    $return{cost} = $items{$local_counter}{cost};
+    $return{id}   = $items{$local_counter}{id};
+
+    return(%return);
+
+  }
+
+  #############################################################################
+  # _load_items subroutine
+  #############################################################################
+  sub _load_items {
+  
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # get vars passed to function 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    my $debugger = shift;
+    my $item_type = shift;
+
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %items;
     my $counter = 0;
     
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get the list of weapons available and store them in a hash table
+    # get the list of items available and store them in a hash table
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $item_list = Util::ReadInventory::Read($debugger, $item_type); 
     my @items = split "\n", $item_list;
@@ -47,9 +133,10 @@ package Feature::Items {
       my @item_info = split ',', substr($item, index($item, $item_name) + length($item_name) + 1);
       my $item_buy  = $item_info[0];
       my $item_cost = $item_info[1];
+      my $item_id   = $item_info[2];
 
       # check if the line is valid
-      unless (@item_info == 2) {
+      unless (@item_info == 3) {
         my $h_counter = $counter+1;
         print "Malformed inventory file\n";
         print "\tI suspect the error to be near to:\n";
@@ -63,28 +150,19 @@ package Feature::Items {
       $items{$counter}{name} = $item_name;
       $items{$counter}{buy}  = $item_info[0];
       $items{$counter}{cost} = $item_info[1];
+      $items{$counter}{id}   = $item_info[2];
       
       # increment the index counter
       $counter++;
     }
-
     $debugger->write("[ITEMS]: Finished processing $item_type inventory file");
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get a random number with the max being the index counter
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $random_int = Util::Random::GetRandom($debugger, $counter);
-
-    # return whatever is stored in the items hash at the random index
-    my %return;
-    $return{name} = $items{$random_int}{name};
-    $return{buy}  = $items{$random_int}{buy};
-    $return{cost} = $items{$random_int}{cost};
     
-    return(%return);
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # return data 
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return ($counter, %items);
 
   }
-
   # perl needs this
   1;
 }
