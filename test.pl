@@ -9,6 +9,7 @@
 use strict;
 use warnings;
 use Capture::Tiny ':all';
+use Class::CSV;
 use Data::Dumper;
 
 use lib '.';
@@ -19,6 +20,7 @@ my @seeds;
 my %results;
 
 # init the result table
+print "Initializing results table..\n";
 foreach my $difficulty_out (0..21) {
   $results{$difficulty_out}{difficulty} = 0;
 
@@ -47,6 +49,7 @@ foreach my $difficulty_out (0..21) {
 
 
 # run the tests as requested
+print "Running tests..\n";
 foreach my $curren_test (0..$test_count-1) {
   foreach(0..21) {
     print "\rCurrent Test: $curren_test/$test_count\tSubtest: $_/21   ";
@@ -55,6 +58,7 @@ foreach my $curren_test (0..$test_count-1) {
 }
 
 # calculate the results after running the tests
+print "\nCalculating results..\n";
 _calc_results();
 
 # run test 
@@ -157,42 +161,102 @@ sub _parse_seed {
 # print some results
 sub _print_results {
 
-  my $csv;
-  my @ids = ('difficulty');
+	print "Constructing result csv..\n";
+	
+	my @ids = ('difficulty');
 
-  foreach my $difficulty (0..21) {
-    print "Diffculty $difficulty used $results{$difficulty}{difficulty} times\n";
-
-    # pistol data
-    foreach my $pistol_id (0..9) {
-      print "\tPistol id $pistol_id appears $results{$difficulty}{pistol_ids}{$pistol_id}{count} times\n";
-      push @ids, "pistol_id:$pistol_id";
-    }
-    print "\n";
-    # weapon data
-    foreach my $weapon_id (0..19) {
-      print "\tWeapon id $weapon_id appears $results{$difficulty}{weapon_ids}{$weapon_id}{count} times\n";
-      push @ids, "weapon_id:$weapon_id";
-    }
-    print "\n";
-    # grenade data
-    foreach my $grenade_id (0..5) {
-      print "\tGrenade id $grenade_id appears $results{$difficulty}{grenade_ids}{$grenade_id}{count} times\n";
-      push @ids, "grenade_id:$grenade_id";
-    }
-    print "\n";
-    # weapon data
-    foreach my $util_id (0..4) {
-      print "\tUtil id $util_id appears $results{$difficulty}{util_ids}{$util_id}{count} times\n";
-      push @ids, "strat_id:$util_id";
-    }
-    print "\n";
-    # weapon data
-    foreach my $strat_id (0..13) {
-      print "\tStrat id $strat_id appears $results{$difficulty}{strat_ids}{$strat_id}{count} times\n";
-      push @ids, "strat_id:$strat_id";
-    }
-    print "\n";
+  # pistol data
+  foreach my $pistol_id (0..9) {
+    push @ids, "pistol_id:$pistol_id";
+  }
+  # weapon data
+  foreach my $weapon_id (0..19) {
+    push @ids, "weapon_id:$weapon_id";
+  }
+  # grenade data
+  foreach my $grenade_id (0..5) {
+    push @ids, "grenade_id:$grenade_id";
+  }
+  # weapon data
+  foreach my $util_id (0..4) {
+    push @ids, "util_id:$util_id";
+  }
+  # weapon data
+  foreach my $strat_id (0..13) {
+    push @ids, "strat_id:$strat_id";
   }
 
+	my $fields = \@ids;
+	print $fields;
+
+  my $csv = Class::CSV->new({
+    fields => $fields,
+		line_seperator => "\n"
+  });
+  foreach my $difficulty (0..21) {
+    # fill the csv object with data
+    $csv->add_line({
+      difficulty     => $difficulty,
+      "pistol_id:0"  => $results{$difficulty}{pistol_ids}{0}{count},
+      "pistol_id:1"  => $results{$difficulty}{pistol_ids}{1}{count},
+      "pistol_id:2"  => $results{$difficulty}{pistol_ids}{2}{count},
+      "pistol_id:3"  => $results{$difficulty}{pistol_ids}{3}{count},
+      "pistol_id:4"  => $results{$difficulty}{pistol_ids}{4}{count},
+      "pistol_id:5"  => $results{$difficulty}{pistol_ids}{5}{count},
+      "pistol_id:6"  => $results{$difficulty}{pistol_ids}{6}{count},
+      "pistol_id:7"  => $results{$difficulty}{pistol_ids}{7}{count},
+      "pistol_id:8"  => $results{$difficulty}{pistol_ids}{8}{count},
+      "pistol_id:9"  => $results{$difficulty}{pistol_ids}{9}{count},
+      "weapon_id:0"  => $results{$difficulty}{weapon_ids}{0}{count},
+      "weapon_id:1"  => $results{$difficulty}{weapon_ids}{1}{count},
+      "weapon_id:2"  => $results{$difficulty}{weapon_ids}{2}{count},
+      "weapon_id:3"  => $results{$difficulty}{weapon_ids}{3}{count},
+      "weapon_id:4"  => $results{$difficulty}{weapon_ids}{4}{count},
+      "weapon_id:5"  => $results{$difficulty}{weapon_ids}{5}{count},
+      "weapon_id:6"  => $results{$difficulty}{weapon_ids}{6}{count},
+      "weapon_id:7"  => $results{$difficulty}{weapon_ids}{7}{count},
+      "weapon_id:8"  => $results{$difficulty}{weapon_ids}{8}{count},
+      "weapon_id:9"  => $results{$difficulty}{weapon_ids}{9}{count},
+      "weapon_id:10" => $results{$difficulty}{weapon_ids}{10}{count},
+      "weapon_id:11" => $results{$difficulty}{weapon_ids}{11}{count},
+      "weapon_id:12" => $results{$difficulty}{weapon_ids}{12}{count},
+      "weapon_id:13" => $results{$difficulty}{weapon_ids}{13}{count},
+      "weapon_id:14" => $results{$difficulty}{weapon_ids}{14}{count},
+      "weapon_id:15" => $results{$difficulty}{weapon_ids}{15}{count},
+      "weapon_id:16" => $results{$difficulty}{weapon_ids}{16}{count},
+      "weapon_id:17" => $results{$difficulty}{weapon_ids}{17}{count},
+      "weapon_id:18" => $results{$difficulty}{weapon_ids}{18}{count},
+      "weapon_id:19" => $results{$difficulty}{weapon_ids}{19}{count},
+			"grenade_id:0" => $results{$difficulty}{grenade_ids}{0}{count},
+			"grenade_id:1" => $results{$difficulty}{grenade_ids}{1}{count},
+			"grenade_id:2" => $results{$difficulty}{grenade_ids}{2}{count},
+			"grenade_id:3" => $results{$difficulty}{grenade_ids}{3}{count},
+			"grenade_id:4" => $results{$difficulty}{grenade_ids}{4}{count},
+			"grenade_id:5" => $results{$difficulty}{grenade_ids}{5}{count},
+			"util_id:0"    => $results{$difficulty}{util_ids}{0}{count},
+			"util_id:1"    => $results{$difficulty}{util_ids}{1}{count},
+			"util_id:2"    => $results{$difficulty}{util_ids}{2}{count},
+			"util_id:3"    => $results{$difficulty}{util_ids}{3}{count},
+			"util_id:4"    => $results{$difficulty}{util_ids}{4}{count},
+			"strat_id:0"   => $results{$difficulty}{strat_ids}{0}{count},
+			"strat_id:1"   => $results{$difficulty}{strat_ids}{1}{count},
+			"strat_id:2"   => $results{$difficulty}{strat_ids}{2}{count},
+			"strat_id:3"   => $results{$difficulty}{strat_ids}{3}{count},
+			"strat_id:4"   => $results{$difficulty}{strat_ids}{4}{count},
+			"strat_id:5"   => $results{$difficulty}{strat_ids}{5}{count},
+			"strat_id:6"   => $results{$difficulty}{strat_ids}{6}{count},
+			"strat_id:7"   => $results{$difficulty}{strat_ids}{7}{count},
+			"strat_id:8"   => $results{$difficulty}{strat_ids}{8}{count},
+			"strat_id:9"   => $results{$difficulty}{strat_ids}{9}{count},
+			"strat_id:10"  => $results{$difficulty}{strat_ids}{10}{count},
+			"strat_id:11"  => $results{$difficulty}{strat_ids}{11}{count},
+			"strat_id:12"  => $results{$difficulty}{strat_ids}{12}{count},
+			"strat_id:13"  => $results{$difficulty}{strat_ids}{13}{count},
+    });
+  }
+  # write the test output file
+  open(my $fh, '>', "test/test.csv") or die "Cannot open test result file for writing: $!";
+    print $fh $csv->string();
+  close $csv;
+	print "All tests completed.\n";
 }
