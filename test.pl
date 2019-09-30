@@ -186,15 +186,14 @@ sub _print_results {
     push @ids, "strat_id:$strat_id";
   }
 
-	my $fields = \@ids;
-	print $fields;
+  my $csv = Class::CSV->new(
+		line_seperator => "\n",
+    fields => \@ids,
+  );
 
-  my $csv = Class::CSV->new({
-    fields => $fields,
-		line_seperator => "\n"
-  });
+  # fill the csv object with data
   foreach my $difficulty (0..21) {
-    # fill the csv object with data
+    
     $csv->add_line({
       difficulty     => $difficulty,
       "pistol_id:0"  => $results{$difficulty}{pistol_ids}{0}{count},
@@ -255,8 +254,8 @@ sub _print_results {
     });
   }
   # write the test output file
-  open(my $fh, '>', "test/test.csv") or die "Cannot open test result file for writing: $!";
+  open(my $fh, '>', "tests/test.csv") or die "Cannot open test result file for writing: $!";
     print $fh $csv->string();
-  close $csv;
+  close $fh;
 	print "All tests completed.\n";
 }
