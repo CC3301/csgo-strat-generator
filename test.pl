@@ -50,10 +50,14 @@ foreach my $difficulty_out (0..21) {
 
 # run the tests as requested
 print "Running tests..\n";
-foreach my $curren_test (0..$test_count-1) {
-  foreach(0..21) {
-    print "\rCurrent Test: $curren_test/$test_count\tSubtest: $_/21   ";
-    _run_test($_);
+foreach my $difficulty (0..21) {
+  print "\rProgress: " . int($difficulty/21 * 100) . "%";
+  open(my $fh, '>', "data/config") or die "Cant create testing config";
+    print $fh "export_seed:1\n";
+    print $fh "difficulty:$difficulty\n";
+  close $fh;
+  foreach my $current_test (0..$test_count-1) {
+    _run_test($difficulty);
   }
 }
 
@@ -64,13 +68,6 @@ _calc_results();
 # run test 
 sub _run_test {
 
-  my $difficulty = shift;
-
-  open(my $fh, '>', "data/config") or die "Cant create testing config";
-    print $fh "export_seed:1\n";
-    print $fh "difficulty:$difficulty\n";
-  close $fh;
-  
   my $cmd_output;
   $cmd_output = capture {
     eval {
