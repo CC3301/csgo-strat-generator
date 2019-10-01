@@ -31,6 +31,21 @@ pack_zip() {
 
 }
 
+test_run() {
+
+  # run the script once to see if it works
+  cwd=$(pwd)
+  cd $cwd/csgo-strat-generator
+  perl csgo.pl > ../build.out
+  if [ $? != 0 ]; then
+    echo "Test failed"
+    exit
+  fi
+  echo "Test complete"
+  cd ..
+
+}
+
 cleanup() {
 
   # remove the csgo-strat-generator directory
@@ -52,9 +67,15 @@ if [ -z $zip ]; then
   echo "Need zip to fucntion"
   exit
 fi
+perl=$(which perl)
+if [ -z $perl ]; then 
+  echo "Need perl to function"
+  exit
+fi
 
 # function calls
 create_build
+test_run
 build_binary
 pack_zip
 cleanup
