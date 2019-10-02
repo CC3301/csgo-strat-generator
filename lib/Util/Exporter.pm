@@ -7,8 +7,7 @@ package Util::Exporter {
   use warnings;
  
   use lib 'lib/';
-  #use Util::Tools;
-  use Util::Random;
+  use Util::Tools;
 
   #############################################################################
   # Export subroutine
@@ -27,7 +26,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&/><!?][}{+~*%#@';
     my @chars = split //, $chars;
-    @chars = _shuffle($debugger, \@chars);
+    @chars = Util::Tools::Shuffle($debugger, \@chars);
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # transform some vars into a more readable format 
@@ -148,14 +147,14 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # generate seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $seed = "@$chars[Util::Random::GetRandom($debugger, $char_count)]$state->{difficulty}";
+    my $seed = "@$chars[Util::Tools::GetRandom($debugger, $char_count)]$state->{difficulty}";
 
     # on difficulty 0, we have pistols and weapons, each need to be individually checked
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{pistols} || $state->{display_disabled})) {
-      $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$data->{pistol_id}";
+      $seed = $seed . "@$chars[Util::Tools::GetRandom($debugger, $char_count)]$data->{pistol_id}";
     }
     if ($state->{difficulty} >= 0 && (! $state->{disable}->{weapons} || $state->{display_disabled})) {
-      $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$data->{weapon_id}";
+      $seed = $seed . "@$chars[Util::Tools::GetRandom($debugger, $char_count)]$data->{weapon_id}";
     }
     
     # on difficulty 1, we have grenades
@@ -163,7 +162,7 @@ package Util::Exporter {
       $counter = 0;
       my @grenade_ids = split ';', $data->{grenade_ids};
       foreach(@grenade_ids) {
-        $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$_";
+        $seed = $seed . "@$chars[Util::Tools::GetRandom($debugger, $char_count)]$_";
         $counter++;
       }
     }
@@ -173,14 +172,14 @@ package Util::Exporter {
       $counter = 0;
       my @util_ids = split ';', $data->{util_ids};
       foreach(@util_ids) {
-        $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$_";
+        $seed = $seed . "@$chars[Util::Tools::GetRandom($debugger, $char_count)]$_";
         $counter++;
       }
     }
 
     # on difficulty 3, the only difference is if we have a strat or not. 
     if ($state->{difficulty} >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
-      $seed = $seed . "@$chars[Util::Random::GetRandom($debugger, $char_count)]$data->{strat_id}";
+      $seed = $seed . "@$chars[Util::Tools::GetRandom($debugger, $char_count)]$data->{strat_id}";
     }
     
     
@@ -188,34 +187,6 @@ package Util::Exporter {
     # return seed 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return($seed);
-  }
-
-  ##############################################################################
-  # _shuffle subroutine
-  ##############################################################################
-  sub _shuffle {
- 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $debugger = shift;
-    my $deck = shift;
- 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # other vars 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $i = @$deck;
- 
-    # randomize the array
-    while($i--) {
-      my $j = Util::Random::GetRandom($debugger, $i+1);
-      @$deck[$i,$j] = @$deck[$j,$i];
-    }   
- 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return(@$deck);
   }
 
   # perl needs this

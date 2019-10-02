@@ -8,7 +8,7 @@ package Feature::Strats {
 
   use lib 'lib/';
   use Util::ReadInventory;
-  use Util::Random;
+  use Util::Tools;
 
   # debug state for this module
   my $DEBUG_STATE = 0;
@@ -199,7 +199,7 @@ package Feature::Strats {
 
     # randomize the contents of @scores
     $debugger->write("[STRAT]: Randomizing scores array");
-    @scores = _shuffle($debugger, \@scores);
+    @scores = Util::Tools::Shuffle($debugger, \@scores);
 
     # get a random score
     my $random_score = _get_random_score($debugger, $target_score, @scores);
@@ -296,42 +296,13 @@ package Feature::Strats {
     }
 
     # get the random score
-    my $random_score = Util::Random::GetRandom($debugger, $target_score, $score_min);
+    my $random_score = Util::Tools::GetRandom($debugger, $target_score, $score_min);
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return data
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return($random_score);
   }
-
-  ##############################################################################
-  # _shuffle subroutine
-  ##############################################################################
-  sub _shuffle {
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # get vars passed to the function
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $debugger = shift;
-    my $deck = shift;
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # other vars 
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $i = @$deck;
-
-    # randomize the array
-    while($i--) {
-      my $j = Util::Random::GetRandom($debugger, $i+1);
-      @$deck[$i,$j] = @$deck[$j,$i];
-    }
-
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # return
-    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    return(@$deck);
-  }
-
   # perl needs this
   1;
 }

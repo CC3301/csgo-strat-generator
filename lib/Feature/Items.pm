@@ -7,7 +7,7 @@ package Feature::Items {
   use warnings;
 
   use lib 'lib/';
-  use Util::Random;
+  use Util::Tools;
   use Util::ReadInventory;
 
   #############################################################################
@@ -30,7 +30,7 @@ package Feature::Items {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # get a random number with the max being the index counter
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $random_int = Util::Random::GetRandom($debugger, $counter);
+    my $random_int = Util::Tools::GetRandom($debugger, $counter);
 
     # return whatever is stored in the items hash at the random index
     my %return;

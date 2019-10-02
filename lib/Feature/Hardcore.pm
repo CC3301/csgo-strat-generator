@@ -7,7 +7,7 @@ package Feature::Hardcore {
   use warnings;
 
   use lib 'lib/';
-  use Util::Random;
+  use Util::Tools;
   use Util::ReadInventory;
 
   ##############################################################################
