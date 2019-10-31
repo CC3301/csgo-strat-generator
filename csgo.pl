@@ -18,12 +18,21 @@ my $VERSION = 'v1.2';
 sub Main() {
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  # handle debugging 
+  # handle debugging and config file passing
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  my $debug_state = 0;
+  my $debug_state = 1;
+  my $cfg_path = undef;
   if (defined($ARGV[0]) && $ARGV[0] eq '--debug') {
     shift(@ARGV);
     $debug_state = 1;
+  } 
+  if (defined $ARGV[0] && substr ($ARGV[0], 0, 9) eq "--config=") {
+    my @cfg_path = split //, $ARGV[0];
+    shift(@ARGV);
+    for(0..8) {
+      shift(@cfg_path);
+    }
+    $cfg_path = join '', @cfg_path;
   }
   if ($debug_state) {
     eval "use Carp::Always;";
@@ -39,7 +48,7 @@ sub Main() {
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # parse command line options
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  my %state = Util::Parser::Parse($debugger, @ARGV);
+  my %state = Util::Parser::Parse($debugger, $cfg_path, @ARGV);
 
   #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # other vars 

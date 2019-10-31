@@ -25,7 +25,7 @@ package Util::Exporter {
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    my $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&/><!?][}{+~*%#@';
+    my $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ/!?][}{+~*%#@';
     my @chars = split //, $chars;
     @chars = _shuffle($debugger, \@chars);
 
@@ -108,6 +108,141 @@ package Util::Exporter {
         $debugger->write("[EXPRT]: This feature is not available on $state->{os_type} right now.");
         warn "Cannot write to csgo config directory, feature not supported for $state->{os_type}";
       }
+    }
+
+    # if the --export-html flag is set, export html template for use in csgo-ban time manager
+    if ($state->{export_html}) {
+
+      # get the seed
+      my $seed = _generate_seed($debugger, $data, $state, \@chars);
+
+      open(my $fh, '>', "strat-gen-output.tmpl") or die "Failed to write html output file";
+
+        # begin
+        print $fh "<html>\n";
+        print $fh "\t<head>\n";
+        print $fh "\t\t<meta charset=\"utf-8\" />\n";
+        print $fh "\t</head>\n";
+        print $fh "\t<body>\n";
+        print $fh "\t\t<div class=\"strat-gen-output\">\n";
+        print $fh "\t\t\t<table>\n";
+
+        # Seed
+        print $fh "\t\t\t\t<tr>\n";
+        print $fh "\t\t\t\t\t<td>\n";
+        print $fh "\t\t\t\t\t\tSeed\n";
+        print $fh "\t\t\t\t\t</td>\n";
+        print $fh "\t\t\t\t\t<td>\n";
+        print $fh "\t\t\t\t\t\t$seed\n";
+        print $fh "\t\t\t\t\t</td>\n";
+        print $fh "\t\t\t\t</tr>\n";
+
+        # Pistols
+        if ($difficulty >= 0 && (! $state->{disable}->{pistol} || $state->{display_disabled})) {
+          print $fh "\t\t\t\t<tr>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\tPistol\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\t$data->{pistol_name}\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t</tr>\n";
+        }
+
+        # Weapon
+        if ($difficulty >= 0 && (! $state->{disable}->{weapon} || $state->{display_disabled})) {
+          print $fh "\t\t\t\t<tr>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\tWeapon\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\t$data->{weapon_name}\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t</tr>\n";
+        }
+
+        # nades
+        if ($difficulty >= 1 && (! $state->{disable}->{grenades} || $state->{display_disabled})) {
+          print $fh "\t\t\t\t<tr>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\tGrenade(s)\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\t";
+          foreach(split ';', $data->{grenade_names}){
+            print $fh "$_, ";
+          }
+          print $fh "\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t</tr>\n";
+        }
+
+        # Utils
+        if ($difficulty >= 2 && (! $state->{disable}->{utils} || $state->{display_disabled})) {
+          print $fh "\t\t\t\t<tr>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\tUtil(s)\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\t";
+          foreach(split ';', $data->{util_names}){
+            print $fh "$_, ";
+          }
+          print $fh "\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t</tr>\n";
+        }
+
+        # hardcore
+        if ($difficulty >= 6 && (! $state->{disable}->{hardcore} || $state->{display_disabled})) {
+          print $fh "\t\t\t\t<tr>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\tHardcore Setting(s)\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\t";
+          foreach(split ';', $data->{hardcore}){
+            print $fh "$_, ";
+          }
+          print $fh "\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t</tr>\n";
+        }
+
+
+        if ($difficulty >= 3 && (! $state->{disable}->{strats} || $state->{display_disabled})) {
+          print $fh "\t\t\t\t<tr>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\tStrat\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t\t<td>\n";
+          print $fh "\t\t\t\t\t\t$data->{strat_name}: <br/>";
+          foreach(split ';', $data->{strat_desc}){
+            print $fh "$_<br/>";
+          }
+          print $fh "\n";
+          print $fh "\t\t\t\t\t</td>\n";
+          print $fh "\t\t\t\t</tr>\n";
+        }
+
+        # Difficulty
+        print $fh "\t\t\t\t<tr>\n";
+        print $fh "\t\t\t\t\t<td>\n";
+        print $fh "\t\t\t\t\t\tDifficulty\n";
+        print $fh "\t\t\t\t\t</td>\n";
+        print $fh "\t\t\t\t\t<td>\n";
+        print $fh "\t\t\t\t\t\t$difficulty\n";
+        print $fh "\t\t\t\t\t</td>\n";
+        print $fh "\t\t\t\t</tr>\n";
+
+        # End
+        print $fh "\t\t\t</table>\n";
+        print $fh "\t\t</div>\n";
+        print $fh "\t</body>\n";
+        print $fh "</html>\n";
+
+      close $fh;
+
     }
 
     # if the --export flag is set, export a seed
