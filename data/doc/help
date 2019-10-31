@@ -6,6 +6,11 @@ Usage:
   - csgo.pl [<option> argument]
 
 
+  Prioritised options: *1
+
+    --debug             |  Enables debug mode, debug output is written to log/latest.log
+    --config            |  Use this config file
+
   Extra options:
 
     --rules       | -r  |  Displays the rules that generally apply to this script
@@ -20,11 +25,12 @@ Usage:
     --disable-strats    |  Don't generate a strat
     --display-disabled  |  Display settings even if they are disabled
     --write             |  Write game-rule set to file
-    --write-csgo        |  Write a exec'able config directly into the steam userdata folder. *1
+    --write-csgo        |  Write a exec'able config directly into the steam userdata folder. *2
     --export            |  Print the seed of the generated game-rule set
     --import            |  Import a generated seed and replicate the exact same game-rule set as the exporter
     --doc               |  Read the documentation
     --doc-list          |  List available docs
+    --output_html       |  Output an html file, fixed styling, which can be displayed on a webpage
 
   
   Options which require arguments:
@@ -32,11 +38,13 @@ Usage:
     --difficulty  | -d  | Requires an integer as argument
     --default-key | -k  | Requires only one character as argument
     --doc               | Requires a string as argument
-    --import            | Required a single-quoted string as argument
+    --import            | Requires a single-quoted string as argument
+    --config            | Requires a string after an equals sign, no spaces allowed
 
 
   Other Notes:
 
-  *1  |  This Feature is currently only available on Windows.
+  *1  |  These options need to be in a certian order, debug has the highest priority, then comes config and then comes all other options
+  *2  |  This Feature is currently only available on Windows.
 
 ---------------------------------------------------------------------------------------------------------

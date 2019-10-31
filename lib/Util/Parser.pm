@@ -15,6 +15,7 @@ package Util::Parser {
     # get vars passed to this function
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
+    my $cfg_path = shift || undef;
     my @args = @_;
 
     $debugger->write("[PARSE]: Parsing command line options..");
@@ -29,7 +30,7 @@ package Util::Parser {
     # get default values 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my %state = _set_default($debugger);
-    %state    = _get_config($debugger, \%state);
+    %state    = _get_config($debugger, $cfg_path, \%state);
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parse the args 
@@ -96,6 +97,9 @@ package Util::Parser {
       } elsif ($switch eq '--export') {
         $state{write_output} = 1;
         $state{export_seed} = 1;
+      } elsif ($switch eq '--export-html') {
+        $state{write_output} = 1;
+        $state{export_html} = 1;
       } else {
 
         foreach(@nexts) {
@@ -138,6 +142,7 @@ package Util::Parser {
     $debugger->write("[PARSE]: Setting: import_seed       => $state{import_seed}");
     $debugger->write("[PARSE]: Setting: seed              => $state{seed}");
     $debugger->write("[PARSE]: Setting: export_seed       => $state{export_seed}");
+    $debugger->write("[PARSE]: Setting: export_html       => $state{export_html}");
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # return settings 
@@ -176,7 +181,8 @@ package Util::Parser {
     $state{import_seed}       = 0;
     $state{seed}              = '';
     $state{export_seed}       = 0;
-
+    $state{export_html}       = 0;
+ 
     $state{disable}{pistol}   = 0;
     $state{disable}{weapon}   = 0;
     $state{disable}{grenades} = 0;
@@ -200,16 +206,22 @@ package Util::Parser {
     # get vars passed to function 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $debugger = shift;
+    my $cfg_path = shift || undef;
     my $state = shift || die "Config parse error";
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # other vars
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     my $file = 'data/config';
+    if ($cfg_path) {
+      $file = $cfg_path;
+    }
+    $debugger->write("[PARSE]: CFG_FILE: $file");
     my %special_keys = (
       'write_file' => 'write_output',
       'write_csgo' => 'write_output',
       'export_seed' => 'write_output',
+      'export_html' => 'write_output',
     );
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -276,6 +288,7 @@ package Util::Parser {
       "write_csgo",
       "write_file",
       "export_seed",
+      "export_html",
     );
     my $key_valid = 0;
 
